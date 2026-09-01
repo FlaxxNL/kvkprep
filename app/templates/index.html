@@ -163,7 +163,7 @@
 
                 {% for code, name in supported_languages.items() %}
 
-                    <a href="{{ url_for('set_language', language=code) }}"
+                    <a href="{{ url_for('set_language', language=code, next=request.full_path) }}"
                        class="px-3 py-2 rounded-lg transition
                        {% if current_language == code %}
                            bg-kvk-gold text-gray-900 font-bold
