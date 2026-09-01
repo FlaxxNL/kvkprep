@@ -334,13 +334,6 @@ def create_app():
     def get_locale():
         return session.get("language", "en")
 
-    @app.route("/language/<language>")
-    def set_language(language):
-        if language in SUPPORTED_LANGUAGES:
-            session["language"] = language
-
-        return redirect(request.referrer or url_for("index"))
-
     @app.context_processor
     def inject_language_data():
         return {
