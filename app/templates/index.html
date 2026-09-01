@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="{{ current_language }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingshot KvK Prep</title>
+
+    <title>{{ t("title") }}</title>
+
     {% include 'analytics.html' %}
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <link rel="icon" type="image/svg+xml"
+          href="{{ url_for('static', filename='favicon.svg') }}">
+
     <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -26,139 +32,200 @@
         }
     </script>
 </head>
+
 <body class="bg-kvk-gray-900 text-gray-200 antialiased">
+
     <div class="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+
         <!-- Header -->
         <header class="text-center mb-12">
+
             <div class="text-5xl mb-4">⚔️</div>
+
             <h1 class="text-4xl md:text-5xl font-bold text-kvk-gold">
-                Kingshot KvK Prep
+                {{ t("title") }}
             </h1>
+
             <p class="text-lg text-gray-400 mt-3">
-                Prepare your kingdom. Dominate KvK.
+                {{ t("tagline") }}
             </p>
+
         </header>
+
+
         <!-- Introduction -->
         <section class="bg-kvk-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-kvk-gray-700 mb-8">
+
             <h2 class="text-2xl font-bold text-gray-100 mb-4">
-                Welcome
+                {{ t("welcome") }}
             </h2>
+
             <p class="text-gray-300 leading-relaxed">
-                This tool helps Kingshot players and alliance leadership
-                prepare for Kingdom vs Kingdom.
+                {{ t("intro1") }}
             </p>
+
             <p class="text-gray-300 leading-relaxed mt-4">
-                Players can submit their available resources and speedups,
-                allowing leadership to better coordinate and prepare for KvK.
+                {{ t("intro2") }}
             </p>
+
         </section>
+
+
         <!-- How it works -->
         <section class="bg-kvk-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-kvk-gray-700 mb-8">
+
             <h2 class="text-2xl font-bold text-gray-100 mb-6">
-                How does it work?
+                {{ t("how_it_works") }}
             </h2>
+
             <div class="space-y-6">
+
+                <!-- Step 1 -->
                 <div class="flex gap-4">
+
                     <div class="text-2xl">1️⃣</div>
+
                     <div>
                         <h3 class="font-bold text-gray-100">
-                            Your leadership creates an event
+                            {{ t("step1_title") }}
                         </h3>
+
                         <p class="text-gray-400 mt-1">
-                            Your alliance leadership creates a KvK event
-                            and shares the link with the players.
+                            {{ t("step1_text") }}
                         </p>
                     </div>
+
                 </div>
+
+
+                <!-- Step 2 -->
                 <div class="flex gap-4">
+
                     <div class="text-2xl">2️⃣</div>
+
                     <div>
                         <h3 class="font-bold text-gray-100">
-                            Players submit their information
+                            {{ t("step2_title") }}
                         </h3>
+
                         <p class="text-gray-400 mt-1">
-                            Enter your player information, resources
-                            and available speedups.
+                            {{ t("step2_text") }}
                         </p>
                     </div>
+
                 </div>
+
+
+                <!-- Step 3 -->
                 <div class="flex gap-4">
+
                     <div class="text-2xl">3️⃣</div>
+
                     <div>
                         <h3 class="font-bold text-gray-100">
-                            Leadership coordinates KvK
+                            {{ t("step3_title") }}
                         </h3>
+
                         <p class="text-gray-400 mt-1">
-                            Leadership can use the collected information
-                            to coordinate the alliance during KvK.
+                            {{ t("step3_text") }}
                         </p>
                     </div>
+
                 </div>
+
             </div>
+
         </section>
+
+
         <!-- Guide -->
         <section class="text-center mb-12">
+
             <a href="{{ url_for('guide') }}"
                class="inline-block text-kvk-gold hover:text-amber-300 font-medium underline">
-                Read the full User Guide & Tutorial →
+
+                {{ t("guide") }}
+
             </a>
+
         </section>
+
+
         <!-- Language -->
         <section class="text-center mb-10">
+
             <p class="text-sm text-gray-500 mb-3">
-                Language
+                {{ t("language") }}
             </p>
-<div class="flex flex-wrap justify-center gap-3">
 
-    {% for code, name in supported_languages.items() %}
 
-        <a href="{{ url_for('set_language', language=code) }}"
-           class="px-3 py-2 rounded-lg transition
-           {% if current_language == code %}
-               bg-kvk-gold text-gray-900 font-bold
-           {% else %}
-               text-gray-300 hover:text-kvk-gold hover:bg-kvk-gray-700
-           {% endif %}">
+            <div class="flex flex-wrap justify-center gap-3">
 
-            {% if code == "en" %}
-                🇬🇧
-            {% elif code == "tr" %}
-                🇹🇷
-            {% elif code == "ru" %}
-                🇷🇺
-            {% elif code == "uk" %}
-                🇺🇦
-            {% elif code == "es" %}
-                🇪🇸
-            {% elif code == "fr" %}
-                🇫🇷
-            {% elif code == "de" %}
-                🇩🇪
-            {% elif code == "pl" %}
-                🇵🇱
-            {% elif code == "it" %}
-                🇮🇹
-            {% elif code == "pt" %}
-                🇵🇹
-            {% elif code == "nl" %}
-                🇳🇱
-            {% endif %}
-            {{ name }}
-        </a>
-    {% endfor %}
-</div>
+                {% for code, name in supported_languages.items() %}
+
+                    <a href="{{ url_for('set_language', language=code) }}"
+                       class="px-3 py-2 rounded-lg transition
+                       {% if current_language == code %}
+                           bg-kvk-gold text-gray-900 font-bold
+                       {% else %}
+                           text-gray-300 hover:text-kvk-gold hover:bg-kvk-gray-700
+                       {% endif %}">
+
+                        {% if code == "en" %}
+                            🇬🇧
+                        {% elif code == "tr" %}
+                            🇹🇷
+                        {% elif code == "ru" %}
+                            🇷🇺
+                        {% elif code == "uk" %}
+                            🇺🇦
+                        {% elif code == "es" %}
+                            🇪🇸
+                        {% elif code == "fr" %}
+                            🇫🇷
+                        {% elif code == "de" %}
+                            🇩🇪
+                        {% elif code == "pl" %}
+                            🇵🇱
+                        {% elif code == "it" %}
+                            🇮🇹
+                        {% elif code == "pt" %}
+                            🇵🇹
+                        {% elif code == "nl" %}
+                            🇳🇱
+                        {% endif %}
+
+                        {{ name }}
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+
             <p class="text-xs text-gray-600 mt-3">
-                More languages coming soon.
+                {{ t("more_languages") }}
             </p>
+
         </section>
+
+
         <!-- Footer -->
         <footer class="text-center pb-8">
+
             <a href="https://github.com/FlaxxNL/kvkprep"
                target="_blank"
+               rel="noopener noreferrer"
                class="text-gray-500 hover:text-kvk-gold transition">
-                GitHub
+
+                {{ t("github") }}
+
             </a>
+
         </footer>
+
     </div>
+
 </body>
 </html>
