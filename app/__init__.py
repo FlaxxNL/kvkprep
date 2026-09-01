@@ -117,7 +117,7 @@ def create_app():
             "create_title": "Create a new event",
             "create_subtitle": "Set up a KvK event and share the link with your players.",
             "create_name_label": "Event name",
-            "create_name_help": "For example: KvK Season 5 - Kingdom 442.",
+            "create_name_help": "For example: KvK Season 5 - Kingdom 962.",
             "create_server_label": "Kingdom number (optional)",
             "create_server_help": "Shown as a badge on the submission form.",
             "create_slug_label": "Custom link (optional)",
@@ -189,7 +189,7 @@ def create_app():
             "create_title": "Nieuw event aanmaken",
             "create_subtitle": "Zet een KvK-event op en deel de link met je spelers.",
             "create_name_label": "Naam van het event",
-            "create_name_help": "Bijvoorbeeld: KvK Seizoen 5 - Kingdom 442.",
+            "create_name_help": "Bijvoorbeeld: KvK Seizoen 5 - Kingdom 962.",
             "create_server_label": "Kingdom-nummer (optioneel)",
             "create_server_help": "Wordt als badge getoond op het invulformulier.",
             "create_slug_label": "Eigen link (optioneel)",
@@ -351,7 +351,12 @@ def create_app():
         if language in SUPPORTED_LANGUAGES:
             session["language"] = language
 
-        return redirect(request.referrer or url_for("index"))
+        # Only allow internal, relative paths to prevent open redirects
+        target = request.args.get("next", "")
+        if target.startswith("/") and not target.startswith("//"):
+            return redirect(target)
+
+        return redirect(url_for("index"))
 
     @app.context_processor
     def inject_language_data():
