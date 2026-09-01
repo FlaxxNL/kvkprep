@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="{{ current_language or 'en' }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Successful - KingShot Planner</title>
+    <title>Finalized Schedule - {{ event.name }}</title>
+
     {% include 'analytics.html' %}
+
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -14,6 +17,7 @@
                 extend: {
                     colors: {
                         'kvk-gold': '#FBBF24',
+                        'kvk-blue': '#3B82F6',
                         'kvk-gray': {
                             700: '#374151',
                             800: '#1F2937',
@@ -24,14 +28,526 @@
             }
         }
     </script>
+
+    <style>
+        .slot {
+            border: 1px solid #374151;
+            min-height: 100px;
+            position: relative;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slot-time {
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 2px;
+            background-color: #1F2937;
+            border-bottom: 1px solid #374151;
+        }
+
+        .slot-locked {
+            background-color: #1e3a8a;
+            border: 1px solid #3b82f6;
+        }
+
+        .slot-tentative {
+            background-color: #45331d;
+            border: 1px solid #d97706;
+        }
+
+        .slot-empty {
+            background-color: #111827;
+            opacity: 0.5;
+        }
+
+        .cursor-copy {
+            cursor: pointer;
+        }
+
+        .slot-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body class="bg-kvk-gray-900 text-gray-200 antialiased">
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <div class="bg-kvk-gray-800 p-6 rounded-xl shadow-lg border border-kvk-gray-700 text-center">
-            <h1 class="text-3xl font-bold mb-4 text-green-400">Submission Recorded!</h1>
-            <p class="mb-6 text-gray-300">Thank you, your submission has been successfully recorded. You can close this window.</p>
-            <a href="{{ url_for('index') }}" class="text-kvk-gold hover:underline">Return to Home Page</a>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+
+            <h1 class="text-4xl md:text-5xl font-bold text-kvk-gold">
+                Finalized Schedule
+            </h1>
+
+            <p class="text-lg text-gray-400 mt-2 flex items-center justify-center gap-2">
+                <span>{{ event.name }}</span>
+
+                {% if event.server_id %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-kvk-gray-800 text-kvk-gold border border-kvk-gold/40">
+                        Kingdom #{{ event.server_id }}
+                    </span>
+                {% endif %}
+            </p>
+
+        </header>
+
+
+        <!-- Tab Buttons -->
+        <div class="mb-6 border-b border-kvk-gray-700">
+
+            <nav
+                class="-mb-px flex justify-center space-x-8"
+                aria-label="Tabs"
+            >
+
+                {% for day in active_days %}
+
+                <button
+                    class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
+                    data-target="tab-{{ day }}"
+                >
+
+                    {% if day == 'research' %}
+
+                        Research
+                        (Day {{ event.active_days.research_day if event.active_days.research_day else '5' }})
+
+                    {% else %}
+
+                        {{ day|capitalize }}
+
+                    {% endif %}
+
+                </button>
+
+                {% endfor %}
+
+            </nav>
+
         </div>
+
+
+        <!-- Tab Content -->
+        <div class="space-y-8">
+
+            {% for day in active_days %}
+
+            <div
+                id="tab-{{ day }}"
+                class="tab-content hidden animate-fade-in"
+            >
+
+                <div class="bg-kvk-gray-800 p-6 rounded-xl shadow-lg border border-kvk-gray-700">
+
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-100 capitalize">
+
+                        {% if day == 'research' %}
+
+                            Research
+                            (Day {{ event.active_days.research_day if event.active_days.research_day else '5' }})
+
+                        {% else %}
+
+                            {{ day }}
+
+                        {% endif %}
+
+                        Final Schedule
+
+                    </h2>
+
+
+                    <!-- Schedule Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+
+                        {% for i in range(slot_labels|length) %}
+
+                        {% set assignment = assignments.get(day, {}).get(i) %}
+
+                        <div
+                            class="slot rounded-lg overflow-hidden
+                            {% if assignment %}
+                                {% if assignment.is_locked %}
+                                    slot-locked shadow-lg border-blue-500/50
+                                {% else %}
+                                    slot-tentative shadow-lg border-amber-500/50
+                                {% endif %}
+                                cursor-copy hover:border-kvk-gold transition-all duration-200
+                            {% else %}
+                                slot-empty
+                            {% endif %}"
+
+                            {% if assignment %}
+                                onclick="copyToClipboard('{{ assignment.player_id }}', this)"
+                                title="Click to copy Player ID"
+                            {% endif %}
+                        >
+
+                            <!-- Time -->
+                            <div class="slot-time">
+                                {{ slot_labels[i] }}
+                            </div>
+
+
+                            <!-- Assignment -->
+                            <div class="slot-content">
+
+                                {% if assignment %}
+
+                                    <p class="font-bold text-kvk-gold text-[0.7rem] mb-1">
+
+                                        {% if assignment.is_locked %}
+
+                                            <span class="text-blue-300">
+                                                ● CONFIRMED
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-amber-400 italic">
+                                                ○ TENTATIVE
+                                            </span>
+
+                                        {% endif %}
+
+                                    </p>
+
+
+                                    <p class="font-bold text-gray-100 text-xs">
+                                        [{{ assignment.alliance_name }}]
+                                    </p>
+
+
+                                    <p class="text-gray-100 font-medium break-words px-1">
+                                        {{ assignment.player_name }}
+                                    </p>
+
+
+                                    <!-- Copy Feedback -->
+                                    <div
+                                        class="copy-feedback hidden absolute inset-0 bg-green-600/90 flex items-center justify-center font-bold text-white text-xs rounded-lg"
+                                    >
+                                        Copied!
+                                    </div>
+
+                                {% else %}
+
+                                    <span class="text-gray-600 text-[0.6rem] uppercase tracking-wider">
+                                        Unassigned
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Return Home -->
+        <div class="text-center mt-12">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="text-kvk-gold hover:text-amber-300 transition-colors duration-200 font-medium border border-kvk-gold/30 px-6 py-2 rounded-full hover:border-kvk-gold"
+            >
+                Return to Home
+            </a>
+
+        </div>
+
+
+        <!-- Language -->
+        <section class="text-center mt-10 mb-8">
+
+            <p class="text-sm text-gray-500 mb-3">
+                Language
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-3">
+
+                {% for code, name in supported_languages.items() %}
+
+                    <a
+                        href="{{ url_for('set_language', language=code) }}"
+                        class="px-3 py-2 rounded-lg transition
+                        {% if current_language == code %}
+                            bg-kvk-gold text-gray-900 font-bold
+                        {% else %}
+                            text-gray-300 hover:text-kvk-gold hover:bg-kvk-gray-700
+                        {% endif %}"
+                    >
+
+                        {% if code == "en" %}
+                            🇬🇧
+                        {% elif code == "tr" %}
+                            🇹🇷
+                        {% elif code == "ru" %}
+                            🇷🇺
+                        {% elif code == "uk" %}
+                            🇺🇦
+                        {% elif code == "es" %}
+                            🇪🇸
+                        {% elif code == "fr" %}
+                            🇫🇷
+                        {% elif code == "de" %}
+                            🇩🇪
+                        {% elif code == "pl" %}
+                            🇵🇱
+                        {% elif code == "it" %}
+                            🇮🇹
+                        {% elif code == "pt" %}
+                            🇵🇹
+                        {% elif code == "nl" %}
+                            🇳🇱
+                        {% endif %}
+
+                        {{ name }}
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+            <p class="text-xs text-gray-600 mt-3">
+                More languages coming soon.
+            </p>
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="mt-8 pb-8 text-center border-t border-kvk-gray-700 pt-8">
+
+            <a
+                href="https://github.com/prashmohan/kingdom-appt-planner"
+                target="_blank"
+                class="text-gray-500 hover:text-kvk-gold transition inline-block"
+            >
+
+                <svg
+                    class="w-6 h-6 fill-current"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <path d="M12 .297c-6.63 0-11.5 5.373-11.5 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.02-1.04-.032-2.043-3.197.69-3.872-1.542-3.872-1.542-.523-1.328-1.277-1.682-1.277-1.682-1.044-.714.079-.7.079-.7 1.154 0 1.186 1.761 1.186 1.761 1.026 1.756 2.99 1.248 3.718.954.103-.744.515-1.248.958-1.535.413.354.78 1.053.78 2.122 0 1.532-.014 2.768-.014 3.143 0 .323.217.698.826.577C20.565 22.092 24 17.592 24 12.297c0-6.627-4.87-12-11.5-12z"/>
+
+                </svg>
+
+            </a>
+
+        </footer>
+
     </div>
+
+
+    <script>
+
+        /*
+         * Copy Player ID
+         */
+        function copyToClipboard(text, element) {
+
+            if (!navigator.clipboard) {
+
+                fallbackCopyTextToClipboard(text, element);
+
+                return;
+
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+
+                showFeedback(element);
+
+            }).catch(err => {
+
+                console.error(
+                    'Async: Could not copy text: ',
+                    err
+                );
+
+                fallbackCopyTextToClipboard(text, element);
+
+            });
+
+        }
+
+
+        /*
+         * Fallback copy method
+         */
+        function fallbackCopyTextToClipboard(text, element) {
+
+            const textArea = document.createElement("textarea");
+
+            textArea.value = text;
+
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+
+            textArea.focus();
+            textArea.select();
+
+            try {
+
+                const successful =
+                    document.execCommand('copy');
+
+                if (successful) {
+
+                    showFeedback(element);
+
+                }
+
+            } catch (err) {
+
+                console.error(
+                    'Fallback: Oops, unable to copy',
+                    err
+                );
+
+            }
+
+            document.body.removeChild(textArea);
+
+        }
+
+
+        /*
+         * "Copied!" feedback
+         */
+        function showFeedback(element) {
+
+            const feedback =
+                element.querySelector('.copy-feedback');
+
+            if (feedback) {
+
+                feedback.classList.remove('hidden');
+
+                setTimeout(() => {
+
+                    feedback.classList.add('hidden');
+
+                }, 1500);
+
+            }
+
+        }
+
+
+        /*
+         * Tabs
+         */
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+
+                const tabs =
+                    document.querySelectorAll('.tab-button');
+
+                const tabContents =
+                    document.querySelectorAll('.tab-content');
+
+
+                tabs.forEach(tab => {
+
+                    tab.addEventListener(
+                        'click',
+                        () => {
+
+                            const target =
+                                document.getElementById(
+                                    tab.dataset.target
+                                );
+
+
+                            tabContents.forEach(tc => {
+
+                                tc.classList.add('hidden');
+
+                            });
+
+
+                            target.classList.remove('hidden');
+
+
+                            tabs.forEach(t => {
+
+                                t.classList.remove(
+                                    'border-kvk-gold',
+                                    'text-kvk-gold'
+                                );
+
+                                t.classList.add(
+                                    'border-transparent',
+                                    'text-gray-400',
+                                    'hover:text-gray-200',
+                                    'hover:border-gray-300'
+                                );
+
+                            });
+
+
+                            tab.classList.add(
+                                'border-kvk-gold',
+                                'text-kvk-gold'
+                            );
+
+                            tab.classList.remove(
+                                'border-transparent',
+                                'text-gray-400',
+                                'hover:text-gray-200',
+                                'hover:border-gray-300'
+                            );
+
+                        }
+                    );
+
+                });
+
+
+                /*
+                 * Open first tab automatically
+                 */
+                if (tabs.length > 0) {
+
+                    tabs[0].click();
+
+                }
+
+            }
+        );
+
+    </script>
+
 </body>
 </html>
