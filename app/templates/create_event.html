@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ current_language }}" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>{{ t("create_title") }} - {{ t("title") }}</title>
+    <title>Create a new event - Kingshot KvK Prep</title>
     {% include 'analytics.html' %}
-    <link rel="icon" type="image/svg+xml"
-          href="{{ url_for('static', filename='favicon.svg') }}">
-    <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
+    {{ url_for('static', filename='favicon.svg') }}
+    {{ url_for('static', filename='tailwind.js') }}
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -35,118 +34,63 @@
         <header class="text-center mb-10">
             <div class="text-5xl mb-4">🛠️</div>
             <h1 class="text-3xl md:text-4xl font-bold text-kvk-gold">
-                {{ t("create_title") }}
+                Create a new event
             </h1>
             <p class="text-gray-400 mt-3">
-                {{ t("create_subtitle") }}
+                Set up a KvK event and share the link with your players.
             </p>
         </header>
 
         <!-- Create Event Form -->
-        <form action="{{ url_for('create_event') }}"
-              method="POST"
-              class="bg-kvk-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-kvk-gray-700 space-y-6">
+        <form actioncreate_event') }}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <!-- Event name -->
             <div>
                 <label for="event_name"
                        class="block text-sm font-medium text-gray-300 mb-1">
-                    {{ t("create_name_label") }}
+                    Event name
                 </label>
                 <input type="text"
                        name="event_name"
                        id="event_name"
                        required
                        maxlength="120"
-                       placeholder="KvK #442"
+                       placeholder="KvK #962"
                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
-                <p class="text-xs text-gray-500 mt-1">{{ t("create_name_help") }}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                    For example: KvK Season 5 - Kingdom 962.
+                </p>
             </div>
 
             <!-- Kingdom / server id -->
             <div>
                 <label for="server_id"
                        class="block text-sm font-medium text-gray-300 mb-1">
-                    {{ t("create_server_label") }}
+                    Kingdom number (optional)
                 </label>
                 <input type="number"
                        name="server_id"
                        id="server_id"
                        min="1"
-                       placeholder="442"
+                       value="962"
+                       placeholder="962"
                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
-                <p class="text-xs text-gray-500 mt-1">{{ t("create_server_help") }}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                    Shown as a badge on the submission form.
+                </p>
             </div>
 
             <!-- Custom slug -->
             <div>
                 <label for="custom_slug"
                        class="block text-sm font-medium text-gray-300 mb-1">
-                    {{ t("create_slug_label") }}
+                    Custom link (optional)
                 </label>
                 <div class="flex items-center gap-2">
                     <span class="text-sm text-gray-500 whitespace-nowrap">/event/</span>
                     <input type="text"
                            name="custom_slug"
                            id="custom_slug"
-                           placeholder="kvk-442"
-                           class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
-                </div>
-                <p class="text-xs text-gray-500 mt-1">{{ t("create_slug_help") }}</p>
-            </div>
-
-            <!-- Research day -->
-            <div>
-                <label for="research_day"
-                       class="block text-sm font-medium text-gray-300 mb-1">
-                    {{ t("create_research_label") }}
-                </label>
-                <select name="research_day"
-                        id="research_day"
-                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
-                    <option value="5" selected>Day 5</option>
-                    <option value="2">Day 2</option>
-                </select>
-                <p class="text-xs text-gray-500 mt-1">{{ t("create_research_help") }}</p>
-            </div>
-
-            <!-- Slot count -->
-            <div>
-                <label for="slot_count"
-                       class="block text-sm font-medium text-gray-300 mb-1">
-                    {{ t("create_slots_label") }}
-                </label>
-                <select name="slot_count"
-                        id="slot_count"
-                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
-                    <option value="49" selected>49</option>
-                    <option value="48">48</option>
-                </select>
-                <p class="text-xs text-gray-500 mt-1">{{ t("create_slots_help") }}</p>
-            </div>
-
-            <!-- Warning -->
-            <div class="bg-kvk-gray-900 border border-kvk-gold/40 rounded-lg p-4">
-                <p class="text-sm text-gray-300">
-                    ⚠️ {{ t("create_warning") }}
-                </p>
-            </div>
-
-            <button type="submit"
-                    class="w-full bg-kvk-gold text-kvk-gray-900 font-bold py-3 px-4 rounded-md hover:bg-amber-500 transition duration-300">
-                {{ t("create_submit") }}
-            </button>
-        </form>
-
-        <!-- Back link -->
-        <div class="text-center mt-8">
-            <a href="{{ url_for('index') }}"
-               class="text-gray-500 hover:text-kvk-gold transition text-sm">
-                {{ t("create_back") }}
-            </a>
-        </div>
-
-    </div>
-</body>
-</html>
+                           placeholder="kvk-962"
+        
