@@ -96,6 +96,241 @@ def create_app():
         "nl": "Nederlands",
     }
 
+    TRANSLATIONS = {
+        "en": {
+            "title": "Kingshot KvK Prep",
+            "tagline": "Prepare your kingdom. Dominate KvK.",
+            "welcome": "Welcome",
+            "intro1": "This tool helps Kingshot players and alliance leadership prepare for Kingdom vs Kingdom.",
+            "intro2": "Players can submit their available resources and speedups, allowing leadership to better coordinate and prepare for KvK.",
+            "how_it_works": "How does it work?",
+            "step1_title": "Your leadership creates an event",
+            "step1_text": "Your alliance leadership creates a KvK event and shares the link with the players.",
+            "step2_title": "Players submit their information",
+            "step2_text": "Enter your player information, resources and available speedups.",
+            "step3_title": "Leadership coordinates KvK",
+            "step3_text": "Leadership can use the collected information to coordinate the alliance during KvK.",
+            "guide": "Read the full User Guide & Tutorial →",
+            "language": "Language",
+            "more_languages": "More languages coming soon.",
+            "github": "GitHub",
+        },
+
+        "tr": {
+            "title": "Kingshot KvK Hazırlığı",
+            "tagline": "Krallığını hazırla. KvK'ya hükmet.",
+            "welcome": "Hoş Geldiniz",
+            "intro1": "Bu araç, Kingshot oyuncularının ve ittifak liderlerinin Krallıklar Arası Savaş'a hazırlanmasına yardımcı olur.",
+            "intro2": "Oyuncular sahip oldukları kaynakları ve hızlandırmaları göndererek liderliğin KvK için daha iyi koordinasyon ve hazırlık yapmasını sağlar.",
+            "how_it_works": "Nasıl çalışır?",
+            "step1_title": "Liderliğiniz bir etkinlik oluşturur",
+            "step1_text": "İttifak liderliğiniz bir KvK etkinliği oluşturur ve bağlantıyı oyuncularla paylaşır.",
+            "step2_title": "Oyuncular bilgilerini gönderir",
+            "step2_text": "Oyuncu bilgilerinizi, kaynaklarınızı ve mevcut hızlandırmalarınızı girin.",
+            "step3_title": "Liderlik KvK'yı koordine eder",
+            "step3_text": "Liderlik, toplanan bilgileri kullanarak KvK sırasında ittifakı koordine edebilir.",
+            "guide": "Kullanım Kılavuzu ve Eğitimin tamamını okuyun →",
+            "language": "Dil",
+            "more_languages": "Daha fazla dil yakında eklenecek.",
+            "github": "GitHub",
+        },
+
+        "ru": {
+            "title": "Подготовка к KvK в Kingshot",
+            "tagline": "Подготовьте своё королевство. Победите в KvK.",
+            "welcome": "Добро пожаловать",
+            "intro1": "Этот инструмент помогает игрокам Kingshot и руководству альянса подготовиться к войне королевств.",
+            "intro2": "Игроки могут указать доступные ресурсы и ускорения, чтобы руководство могло лучше координировать подготовку к KvK.",
+            "how_it_works": "Как это работает?",
+            "step1_title": "Руководство создаёт событие",
+            "step1_text": "Руководство вашего альянса создаёт событие KvK и отправляет ссылку игрокам.",
+            "step2_title": "Игроки отправляют информацию",
+            "step2_text": "Укажите информацию об игроке, ресурсы и доступные ускорения.",
+            "step3_title": "Руководство координирует KvK",
+            "step3_text": "Руководство использует собранную информацию для координации альянса во время KvK.",
+            "guide": "Открыть полное руководство и инструкцию →",
+            "language": "Язык",
+            "more_languages": "Скоро появятся новые языки.",
+            "github": "GitHub",
+        },
+
+        "nl": {
+            "title": "Kingshot KvK Voorbereiding",
+            "tagline": "Bereid je koninkrijk voor. Beheers KvK.",
+            "welcome": "Welkom",
+            "intro1": "Deze tool helpt Kingshot-spelers en alliantie-leiders zich voor te bereiden op Kingdom vs Kingdom.",
+            "intro2": "Spelers kunnen hun beschikbare grondstoffen en speedups doorgeven, zodat de leiding de KvK beter kan coördineren en voorbereiden.",
+            "how_it_works": "Hoe werkt het?",
+            "step1_title": "Jullie leiding maakt een event aan",
+            "step1_text": "De leiding van je alliantie maakt een KvK-event aan en deelt de link met de spelers.",
+            "step2_title": "Spelers geven hun informatie door",
+            "step2_text": "Vul je spelersinformatie, grondstoffen en beschikbare speedups in.",
+            "step3_title": "De leiding coördineert KvK",
+            "step3_text": "De leiding kan de verzamelde informatie gebruiken om de alliantie tijdens KvK te coördineren.",
+            "guide": "Bekijk de volledige gebruikershandleiding en tutorial →",
+            "language": "Taal",
+            "more_languages": "Meer talen volgen binnenkort.",
+            "github": "GitHub",
+        },
+
+        "de": {
+            "title": "Kingshot KvK Vorbereitung",
+            "tagline": "Bereitet euer Königreich vor. Bezwingt KvK.",
+            "welcome": "Willkommen",
+            "intro1": "Dieses Tool hilft Kingshot-Spielern und der Allianzleitung bei der Vorbereitung auf Kingdom vs Kingdom.",
+            "intro2": "Spieler können ihre verfügbaren Ressourcen und Beschleuniger angeben, damit die Leitung KvK besser koordinieren und vorbereiten kann.",
+            "how_it_works": "Wie funktioniert es?",
+            "step1_title": "Eure Leitung erstellt ein Event",
+            "step1_text": "Die Allianzleitung erstellt ein KvK-Event und teilt den Link mit den Spielern.",
+            "step2_title": "Spieler übermitteln ihre Informationen",
+            "step2_text": "Gebt eure Spielerinformationen, Ressourcen und verfügbaren Beschleuniger ein.",
+            "step3_title": "Die Leitung koordiniert KvK",
+            "step3_text": "Die Leitung kann die gesammelten Informationen nutzen, um die Allianz während KvK zu koordinieren.",
+            "guide": "Vollständige Anleitung und Tutorial lesen →",
+            "language": "Sprache",
+            "more_languages": "Weitere Sprachen folgen bald.",
+            "github": "GitHub",
+        },
+
+        "fr": {
+            "title": "Préparation KvK Kingshot",
+            "tagline": "Préparez votre royaume. Dominez le KvK.",
+            "welcome": "Bienvenue",
+            "intro1": "Cet outil aide les joueurs de Kingshot et les dirigeants d'alliance à se préparer pour Kingdom vs Kingdom.",
+            "intro2": "Les joueurs peuvent indiquer leurs ressources et accélérations disponibles afin que les dirigeants puissent mieux coordonner la préparation au KvK.",
+            "how_it_works": "Comment ça marche ?",
+            "step1_title": "Votre direction crée un événement",
+            "step1_text": "La direction de votre alliance crée un événement KvK et partage le lien avec les joueurs.",
+            "step2_title": "Les joueurs envoient leurs informations",
+            "step2_text": "Saisissez vos informations de joueur, vos ressources et vos accélérations disponibles.",
+            "step3_title": "La direction coordonne le KvK",
+            "step3_text": "La direction peut utiliser les informations recueillies pour coordonner l'alliance pendant le KvK.",
+            "guide": "Lire le guide et tutoriel complet →",
+            "language": "Langue",
+            "more_languages": "D'autres langues seront bientôt disponibles.",
+            "github": "GitHub",
+        },
+
+        "es": {
+            "title": "Preparación KvK de Kingshot",
+            "tagline": "Prepara tu reino. Domina el KvK.",
+            "welcome": "Bienvenido",
+            "intro1": "Esta herramienta ayuda a los jugadores de Kingshot y a los líderes de alianza a prepararse para Kingdom vs Kingdom.",
+            "intro2": "Los jugadores pueden indicar sus recursos y aceleradores disponibles para que los líderes puedan coordinar mejor la preparación del KvK.",
+            "how_it_works": "¿Cómo funciona?",
+            "step1_title": "El liderazgo crea un evento",
+            "step1_text": "El liderazgo de tu alianza crea un evento de KvK y comparte el enlace con los jugadores.",
+            "step2_title": "Los jugadores envían su información",
+            "step2_text": "Introduce tu información de jugador, recursos y aceleradores disponibles.",
+            "step3_title": "El liderazgo coordina el KvK",
+            "step3_text": "El liderazgo puede utilizar la información recopilada para coordinar la alianza durante el KvK.",
+            "guide": "Leer la guía y tutorial completos →",
+            "language": "Idioma",
+            "more_languages": "Próximamente habrá más idiomas.",
+            "github": "GitHub",
+        },
+
+        "pl": {
+            "title": "Przygotowanie KvK Kingshot",
+            "tagline": "Przygotuj swoje królestwo. Zdominuj KvK.",
+            "welcome": "Witamy",
+            "intro1": "To narzędzie pomaga graczom Kingshot i liderom sojuszu przygotować się do Kingdom vs Kingdom.",
+            "intro2": "Gracze mogą podać dostępne zasoby i przyspieszenia, aby liderzy mogli lepiej koordynować przygotowania do KvK.",
+            "how_it_works": "Jak to działa?",
+            "step1_title": "Liderzy tworzą wydarzenie",
+            "step1_text": "Liderzy twojego sojuszu tworzą wydarzenie KvK i udostępniają link graczom.",
+            "step2_title": "Gracze przesyłają informacje",
+            "step2_text": "Podaj informacje o graczu, zasoby i dostępne przyspieszenia.",
+            "step3_title": "Liderzy koordynują KvK",
+            "step3_text": "Liderzy mogą wykorzystać zebrane informacje do koordynowania sojuszu podczas KvK.",
+            "guide": "Przeczytaj pełny przewodnik i samouczek →",
+            "language": "Język",
+            "more_languages": "Wkrótce pojawią się kolejne języki.",
+            "github": "GitHub",
+        },
+
+        "it": {
+            "title": "Preparazione KvK di Kingshot",
+            "tagline": "Prepara il tuo regno. Domina il KvK.",
+            "welcome": "Benvenuto",
+            "intro1": "Questo strumento aiuta i giocatori di Kingshot e i leader dell'alleanza a prepararsi per Kingdom vs Kingdom.",
+            "intro2": "I giocatori possono indicare le risorse e gli acceleratori disponibili, permettendo ai leader di coordinare meglio la preparazione al KvK.",
+            "how_it_works": "Come funziona?",
+            "step1_title": "La leadership crea un evento",
+            "step1_text": "La leadership della tua alleanza crea un evento KvK e condivide il link con i giocatori.",
+            "step2_title": "I giocatori inviano le informazioni",
+            "step2_text": "Inserisci le informazioni del giocatore, le risorse e gli acceleratori disponibili.",
+            "step3_title": "La leadership coordina il KvK",
+            "step3_text": "La leadership può utilizzare le informazioni raccolte per coordinare l'alleanza durante il KvK.",
+            "guide": "Leggi la guida e il tutorial completi →",
+            "language": "Lingua",
+            "more_languages": "Presto saranno disponibili altre lingue.",
+            "github": "GitHub",
+        },
+
+        "pt": {
+            "title": "Preparação KvK do Kingshot",
+            "tagline": "Prepare seu reino. Domine o KvK.",
+            "welcome": "Bem-vindo",
+            "intro1": "Esta ferramenta ajuda os jogadores de Kingshot e os líderes da aliança a se prepararem para Kingdom vs Kingdom.",
+            "intro2": "Os jogadores podem informar seus recursos e aceleradores disponíveis, permitindo que a liderança coordene melhor a preparação para o KvK.",
+            "how_it_works": "Como funciona?",
+            "step1_title": "A liderança cria um evento",
+            "step1_text": "A liderança da sua aliança cria um evento KvK e compartilha o link com os jogadores.",
+            "step2_title": "Os jogadores enviam suas informações",
+            "step2_text": "Informe seus dados de jogador, recursos e aceleradores disponíveis.",
+            "step3_title": "A liderança coordena o KvK",
+            "step3_text": "A liderança pode usar as informações coletadas para coordenar a aliança durante o KvK.",
+            "guide": "Leia o guia e tutorial completo →",
+            "language": "Idioma",
+            "more_languages": "Mais idiomas em breve.",
+            "github": "GitHub",
+        },
+
+        "uk": {
+            "title": "Підготовка до KvK у Kingshot",
+            "tagline": "Підготуйте своє королівство. Перемагайте в KvK.",
+            "welcome": "Ласкаво просимо",
+            "intro1": "Цей інструмент допомагає гравцям Kingshot та керівництву альянсу підготуватися до війни королівств.",
+            "intro2": "Гравці можуть вказати доступні ресурси та прискорення, щоб керівництво могло краще координувати підготовку до KvK.",
+            "how_it_works": "Як це працює?",
+            "step1_title": "Керівництво створює подію",
+            "step1_text": "Керівництво вашого альянсу створює подію KvK і ділиться посиланням з гравцями.",
+            "step2_title": "Гравці надсилають інформацію",
+            "step2_text": "Введіть інформацію про гравця, ресурси та доступні прискорення.",
+            "step3_title": "Керівництво координує KvK",
+            "step3_text": "Керівництво може використовувати зібрану інформацію для координації альянсу під час KvK.",
+            "guide": "Відкрити повний посібник та інструкцію →",
+            "language": "Мова",
+            "more_languages": "Незабаром з'являться нові мови.",
+            "github": "GitHub",
+        },
+    }
+
+    def get_locale():
+        return session.get("language", "en")
+
+    def translate(key):
+        language = get_locale()
+        return TRANSLATIONS.get(language, TRANSLATIONS["en"]).get(
+            key, TRANSLATIONS["en"].get(key, key)
+        )
+
+    @app.route("/language/<language>")
+    def set_language(language):
+        if language in SUPPORTED_LANGUAGES:
+            session["language"] = language
+
+        return redirect(request.referrer or url_for("index"))
+
+    @app.context_processor
+    def inject_language_data():
+        return {
+            "supported_languages": SUPPORTED_LANGUAGES,
+            "current_language": get_locale(),
+            "t": translate,
+        }
+
     def get_locale():
         return session.get("language", "en")
 
