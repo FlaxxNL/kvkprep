@@ -1100,11 +1100,15 @@ def create_app():
 
         db.commit()
 
-        return redirect(url_for("submission_success"))
+        return redirect(url_for("submission_success", event_uid=event_uid))
+
+    @app.route("/submission-success/<event_uid>")
+    def submission_success(event_uid):
+        return redirect(url_for("public_schedule", event_uid=event_uid))
 
     @app.route("/submission-success")
-    def submission_success():
-        return redirect(url_for("submission_success", event_uid=event_uid))
+    def submission_success_legacy():
+        return redirect(url_for("index"))
 
     @app.route("/admin/<event_uid>")
     def admin_dashboard(event_uid):
