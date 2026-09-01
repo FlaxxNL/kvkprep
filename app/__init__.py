@@ -9,6 +9,7 @@ import secrets
 import sqlite3
 import time
 from logging.handlers import RotatingFileHandler
+from flask_babel import Babel
 
 import markdown
 from flask import (
@@ -76,6 +77,7 @@ def generate_slot_labels(slot_count=49):
 
 def create_app():
     app = Flask(__name__)
+    babel = Babel(app)
     app.config.from_object(Config)
     CSRFProtect(app)
     database.init_app(app)
