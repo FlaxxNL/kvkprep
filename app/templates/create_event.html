@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Create a new event - Kingshot KvK Prep</title>
     {% include 'analytics.html' %}
-    {{ url_for('static', filename='favicon.svg') }}
-    {{ url_for('static', filename='tailwind.js') }}
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,7 +32,7 @@
 
         <!-- Header -->
         <header class="text-center mb-10">
-            <div class="text-5xl mb-4">🛠️</div>
+            <div class="text-5xl mb-4">&#128736;&#65039;</div>
             <h1 class="text-3xl md:text-4xl font-bold text-kvk-gold">
                 Create a new event
             </h1>
@@ -42,13 +42,14 @@
         </header>
 
         <!-- Create Event Form -->
-        <form actioncreate_event') }}
+        <form action="{{ url_for('create_event') }}"
+              method="POST"
+              class="bg-kvk-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-kvk-gray-700 space-y-6">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <!-- Event name -->
             <div>
-                <label for="event_name"
-                       class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="event_name" class="block text-sm font-medium text-gray-300 mb-1">
                     Event name
                 </label>
                 <input type="text"
@@ -63,10 +64,9 @@
                 </p>
             </div>
 
-            <!-- Kingdom / server id -->
+            <!-- Kingdom number -->
             <div>
-                <label for="server_id"
-                       class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="server_id" class="block text-sm font-medium text-gray-300 mb-1">
                     Kingdom number (optional)
                 </label>
                 <input type="number"
@@ -83,8 +83,7 @@
 
             <!-- Custom slug -->
             <div>
-                <label for="custom_slug"
-                       class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="custom_slug" class="block text-sm font-medium text-gray-300 mb-1">
                     Custom link (optional)
                 </label>
                 <div class="flex items-center gap-2">
@@ -102,8 +101,7 @@
 
             <!-- Research day -->
             <div>
-                <label for="research_day"
-                       class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="research_day" class="block text-sm font-medium text-gray-300 mb-1">
                     Research day
                 </label>
                 <select name="research_day"
@@ -119,8 +117,7 @@
 
             <!-- Slot count -->
             <div>
-                <label for="slot_count"
-                       class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="slot_count" class="block text-sm font-medium text-gray-300 mb-1">
                     Time slots
                 </label>
                 <select name="slot_count"
@@ -137,8 +134,7 @@
             <!-- Warning -->
             <div class="bg-kvk-gray-900 border border-kvk-gold/40 rounded-lg p-4">
                 <p class="text-sm text-gray-300">
-                    ⚠️ You will receive an admin link after creating. Save it carefully,
-                    it is the only way to manage this event.
+                    &#9888;&#65039; You will receive an admin link after creating. Save it carefully, it is the only way to manage this event.
                 </p>
             </div>
 
@@ -150,8 +146,8 @@
 
         <!-- Back link -->
         <div class="text-center mt-8">
-            {{ url_for('index') }}ition text-sm">
-                ← Back to home
+            <a href="{{ url_for('index') }}" class="text-gray-500 hover:text-kvk-gold transition text-sm">
+                &#8592; Back to home
             </a>
         </div>
 
