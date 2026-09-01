@@ -114,6 +114,21 @@ def create_app():
             "language": "Language",
             "more_languages": "More languages coming soon.",
             "github": "GitHub",
+            "create_title": "Create a new event",
+            "create_subtitle": "Set up a KvK event and share the link with your players.",
+            "create_name_label": "Event name",
+            "create_name_help": "For example: KvK Season 5 - Kingdom 442.",
+            "create_server_label": "Kingdom number (optional)",
+            "create_server_help": "Shown as a badge on the submission form.",
+            "create_slug_label": "Custom link (optional)",
+            "create_slug_help": "Leave empty for an automatically generated link.",
+            "create_research_label": "Research day",
+            "create_research_help": "Choose on which day the research event takes place.",
+            "create_slots_label": "Time slots",
+            "create_slots_help": "49 slots starts 15 minutes before the hour, 48 slots starts on the hour.",
+            "create_submit": "Create event",
+            "create_back": "\u2190 Back to home",
+            "create_warning": "You will receive an admin link after creating. Save it carefully, it is the only way to manage this event.",
         },
 
         "tr": {
@@ -171,6 +186,21 @@ def create_app():
             "language": "Taal",
             "more_languages": "Meer talen volgen binnenkort.",
             "github": "GitHub",
+            "create_title": "Nieuw event aanmaken",
+            "create_subtitle": "Zet een KvK-event op en deel de link met je spelers.",
+            "create_name_label": "Naam van het event",
+            "create_name_help": "Bijvoorbeeld: KvK Seizoen 5 - Kingdom 442.",
+            "create_server_label": "Kingdom-nummer (optioneel)",
+            "create_server_help": "Wordt als badge getoond op het invulformulier.",
+            "create_slug_label": "Eigen link (optioneel)",
+            "create_slug_help": "Laat leeg voor een automatisch gegenereerde link.",
+            "create_research_label": "Research-dag",
+            "create_research_help": "Kies op welke dag het research-event valt.",
+            "create_slots_label": "Tijdsloten",
+            "create_slots_help": "49 sloten start een kwartier voor het hele uur, 48 sloten start op het hele uur.",
+            "create_submit": "Event aanmaken",
+            "create_back": "\u2190 Terug naar home",
+            "create_warning": "Je krijgt na het aanmaken een adminlink. Bewaar deze goed, het is de enige manier om dit event te beheren.",
         },
 
         "de": {
@@ -331,16 +361,6 @@ def create_app():
             "t": translate,
         }
 
-    def get_locale():
-        return session.get("language", "en")
-
-    @app.context_processor
-    def inject_language_data():
-        return {
-            "supported_languages": SUPPORTED_LANGUAGES,
-            "current_language": get_locale(),
-        }
-    
     # Setup Audit Logging
     log_dir = os.path.join(app.root_path, "..", "logs")
     os.makedirs(log_dir, exist_ok=True)
@@ -431,7 +451,12 @@ def create_app():
             mimetype="image/svg+xml",
         )
 
+    @app.route("/create-event")
+    def create_event_form():
+        return render_template("create_event.html")
+
     @app.route("/create", methods=["POST"])
+    @app.route("/create-event", methods=["POST"])
     def create_event():
         event_name = request.form.get("event_name", "").strip()
         if not event_name:
