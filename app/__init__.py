@@ -1104,7 +1104,7 @@ def create_app():
 
     @app.route("/submission-success")
     def submission_success():
-        return render_template("submission_success.html")
+        return redirect(url_for("submission_success", event_uid=event_uid))
 
     @app.route("/admin/<event_uid>")
     def admin_dashboard(event_uid):
