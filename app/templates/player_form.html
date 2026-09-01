@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="{{ current_language }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit for {{ event.name }}</title>
+    <title>{{ t("pf_title") }} {{ event.name }}</title>
 
     {% include 'analytics.html' %}
 
@@ -79,7 +79,7 @@
         <header class="text-center mb-8">
 
             <h1 class="text-4xl md:text-5xl font-bold text-kvk-gold">
-                Submission Form
+                {{ t("pf_heading") }}
             </h1>
 
             <p class="text-lg text-gray-400 mt-2 flex items-center justify-center gap-2 flex-wrap">
@@ -87,7 +87,7 @@
 
                 {% if event.server_id %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-kvk-gray-800 text-kvk-gold border border-kvk-gold/40">
-                        Kingdom #{{ event.server_id }}
+                        {{ t("pf_kingdom") }} #{{ event.server_id }}
                     </span>
                 {% endif %}
             </p>
@@ -99,14 +99,14 @@
         <section class="text-center mb-8">
 
             <p class="text-sm text-gray-500 mb-3">
-                Language
+                {{ t("language") }}
             </p>
 
             <div class="flex flex-wrap justify-center gap-3">
 
                 {% for code, name in supported_languages.items() %}
 
-                    <a href="{{ url_for('set_language', language=code) }}"
+                    <a href="{{ url_for('set_language', language=code, next=request.full_path) }}"
                        class="px-3 py-2 rounded-lg transition
                        {% if current_language == code %}
                            bg-kvk-gold text-gray-900 font-bold
@@ -147,7 +147,7 @@
             </div>
 
             <p class="text-xs text-gray-600 mt-3">
-                More languages coming soon.
+                {{ t("more_languages") }}
             </p>
 
         </section>
@@ -166,7 +166,7 @@
             <div class="p-4 border-b border-kvk-gray-700">
 
                 <h2 class="text-2xl font-bold text-gray-100 mb-4">
-                    Your Information
+                    {{ t("pf_your_info") }}
                 </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
@@ -176,7 +176,7 @@
 
                         <label for="player_id"
                                class="block text-sm font-medium text-gray-300 mb-1">
-                            Player ID (Numeric)
+                            {{ t("pf_player_id") }}
                         </label>
 
                         <input type="text"
@@ -185,7 +185,7 @@
                                required
                                pattern="\d*"
                                inputmode="numeric"
-                               placeholder="e.g. 12345678"
+                               placeholder="{{ t('pf_player_id_ph') }}"
                                class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
 
                     </div>
@@ -196,14 +196,14 @@
 
                         <label for="player_name"
                                class="block text-sm font-medium text-gray-300 mb-1">
-                            Player Name
+                            {{ t("pf_player_name") }}
                         </label>
 
                         <input type="text"
                                name="player_name"
                                id="player_name"
                                required
-                               placeholder="e.g. KingArthur"
+                               placeholder="{{ t('pf_player_name_ph') }}"
                                class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
 
                     </div>
@@ -214,13 +214,13 @@
 
                         <label for="alliance_name"
                                class="block text-sm font-medium text-gray-300 mb-1">
-                            Alliance
+                            {{ t("pf_alliance") }}
                         </label>
 
                         <input type="text"
                                name="alliance_name"
                                id="alliance_name"
-                               placeholder="e.g. KVK"
+                               placeholder="{{ t('pf_alliance_ph') }}"
                                class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
 
                     </div>
@@ -235,7 +235,7 @@
 
                     <label for="backpack_screenshot"
                            class="block text-sm font-medium text-gray-300 mb-2">
-                        Backpack Screenshot (Optional)
+                        {{ t("pf_screenshot") }}
                     </label>
 
                     <div class="flex items-center gap-4 flex-wrap">
@@ -252,7 +252,7 @@
                                hover:file:bg-kvk-gray-600 transition">
 
                         <p class="text-xs text-gray-500 italic">
-                            Upload a screenshot of your backpack to help verify your resources.
+                            {{ t("pf_screenshot_help") }}
                         </p>
 
                     </div>
@@ -276,12 +276,11 @@
                     <div class="p-4 rounded-lg bg-kvk-gray-900 border border-kvk-gray-700">
 
                         <h3 class="font-bold text-xl mb-2 text-amber-400">
-                            Day 1: Construction
+                            {{ t("pf_day_construction") }}
                         </h3>
 
                         <p class="text-xs text-gray-400 mb-4 italic">
-                            Enter resources and select <strong>all feasible</strong> time slots.
-                            More slots give the system more flexibility to match you.
+                            {{ t("pf_day_help") }}
                         </p>
 
 
@@ -291,7 +290,7 @@
                             <div>
 
                                 <label class="block text-sm font-medium text-gray-300 mb-2">
-                                    Speedups
+                                    {{ t("pf_speedups") }}
                                 </label>
 
                                 <div class="flex gap-2 mb-2">
@@ -300,21 +299,21 @@
                                             data-unit="days"
                                             data-section="construction"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                        Days
+                                        {{ t("pf_days") }}
                                     </button>
 
                                     <button type="button"
                                             data-unit="hours"
                                             data-section="construction"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                        Hours
+                                        {{ t("pf_hours") }}
                                     </button>
 
                                     <button type="button"
                                             data-unit="minutes"
                                             data-section="construction"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gold bg-kvk-gold text-kvk-gray-900 font-bold transition">
-                                        Minutes
+                                        {{ t("pf_minutes") }}
                                     </button>
 
                                 </div>
@@ -327,7 +326,7 @@
                                          id="days-container-construction">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Days
+                                            {{ t("pf_days") }}
                                         </label>
 
                                         <input type="number"
@@ -343,7 +342,7 @@
                                          id="hours-container-construction">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Hours
+                                            {{ t("pf_hours") }}
                                         </label>
 
                                         <input type="number"
@@ -359,7 +358,7 @@
                                     <div id="minutes-container-construction">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Minutes
+                                            {{ t("pf_minutes") }}
                                         </label>
 
                                         <input type="number"
@@ -385,7 +384,7 @@
 
                                 <label for="truegold"
                                        class="block text-sm font-medium text-gray-300">
-                                    TrueGold
+                                    {{ t("pf_truegold") }}
                                 </label>
 
                                 <input type="number"
@@ -402,7 +401,7 @@
 
                                 <label for="tempered_truegold"
                                        class="block text-sm font-medium text-gray-300">
-                                    Tempered TrueGold
+                                    {{ t("pf_tempered_truegold") }}
                                 </label>
 
                                 <input type="number"
@@ -447,12 +446,11 @@
                     <div class="p-4 rounded-lg bg-kvk-gray-900 border border-kvk-gray-700">
 
                         <h3 class="font-bold text-xl mb-2 text-blue-500">
-                            Day {{ event.active_days.research_day if event.active_days.research_day else '5' }}: Research
+                            {{ t("pf_day") }} {{ event.active_days.research_day if event.active_days.research_day else '5' }}: {{ t("pf_research") }}
                         </h3>
 
                         <p class="text-xs text-gray-400 mb-4 italic">
-                            Enter resources and select <strong>all feasible</strong> time slots.
-                            More slots give the system more flexibility to match you.
+                            {{ t("pf_day_help") }}
                         </p>
 
 
@@ -462,7 +460,7 @@
                             <div>
 
                                 <label class="block text-sm font-medium text-gray-300 mb-2">
-                                    Speedups
+                                    {{ t("pf_speedups") }}
                                 </label>
 
                                 <div class="flex gap-2 mb-2">
@@ -471,21 +469,21 @@
                                             data-unit="days"
                                             data-section="research"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                        Days
+                                        {{ t("pf_days") }}
                                     </button>
 
                                     <button type="button"
                                             data-unit="hours"
                                             data-section="research"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                        Hours
+                                        {{ t("pf_hours") }}
                                     </button>
 
                                     <button type="button"
                                             data-unit="minutes"
                                             data-section="research"
                                             class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gold bg-kvk-gold text-kvk-gray-900 font-bold transition">
-                                        Minutes
+                                        {{ t("pf_minutes") }}
                                     </button>
 
                                 </div>
@@ -498,7 +496,7 @@
                                          id="days-container-research">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Days
+                                            {{ t("pf_days") }}
                                         </label>
 
                                         <input type="number"
@@ -514,7 +512,7 @@
                                          id="hours-container-research">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Hours
+                                            {{ t("pf_hours") }}
                                         </label>
 
                                         <input type="number"
@@ -530,7 +528,7 @@
                                     <div id="minutes-container-research">
 
                                         <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                            Minutes
+                                            {{ t("pf_minutes") }}
                                         </label>
 
                                         <input type="number"
@@ -556,7 +554,7 @@
 
                                 <label for="truegold_dust"
                                        class="block text-sm font-medium text-gray-300">
-                                    TrueGold Dust
+                                    {{ t("pf_truegold_dust") }}
                                 </label>
 
                                 <input type="number"
@@ -601,19 +599,18 @@
                     <div class="p-4 rounded-lg bg-kvk-gray-900 border border-kvk-gray-700">
 
                         <h3 class="font-bold text-xl mb-2 text-red-500">
-                            Day 4: Troop Training
+                            {{ t("pf_day_training") }}
                         </h3>
 
                         <p class="text-xs text-gray-400 mb-4 italic">
-                            Enter resources and select <strong>all feasible</strong> time slots.
-                            More slots give the system more flexibility to match you.
+                            {{ t("pf_day_help") }}
                         </p>
 
 
                         <div class="mb-4">
 
                             <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Speedups
+                                {{ t("pf_speedups") }}
                             </label>
 
 
@@ -623,21 +620,21 @@
                                         data-unit="days"
                                         data-section="training"
                                         class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                    Days
+                                    {{ t("pf_days") }}
                                 </button>
 
                                 <button type="button"
                                         data-unit="hours"
                                         data-section="training"
                                         class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gray-700 bg-kvk-gray-700 text-gray-400 hover:bg-kvk-gray-600 transition">
-                                    Hours
+                                    {{ t("pf_hours") }}
                                 </button>
 
                                 <button type="button"
                                         data-unit="minutes"
                                         data-section="training"
                                         class="unit-btn flex-1 py-1 px-2 text-xs rounded border border-kvk-gold bg-kvk-gold text-kvk-gray-900 font-bold transition">
-                                    Minutes
+                                    {{ t("pf_minutes") }}
                                 </button>
 
                             </div>
@@ -650,7 +647,7 @@
                                      id="days-container-training">
 
                                     <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                        Days
+                                        {{ t("pf_days") }}
                                     </label>
 
                                     <input type="number"
@@ -666,7 +663,7 @@
                                      id="hours-container-training">
 
                                     <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                        Hours
+                                        {{ t("pf_hours") }}
                                     </label>
 
                                     <input type="number"
@@ -682,7 +679,7 @@
                                 <div id="minutes-container-training">
 
                                     <label class="block text-[10px] uppercase text-gray-500 mb-1">
-                                        Minutes
+                                        {{ t("pf_minutes") }}
                                     </label>
 
                                     <input type="number"
@@ -739,7 +736,7 @@
             <!-- Submit -->
             <button type="submit"
                     class="mt-6 w-full bg-kvk-gold text-kvk-gray-900 font-bold py-3 px-4 rounded-md hover:bg-amber-500 transition duration-300">
-                Submit All Entries
+                {{ t("pf_submit") }}
             </button>
 
         </form>
@@ -768,6 +765,16 @@
 
 
     <script>
+
+        const I18N = {
+            err_player_id: {{ t("pf_err_player_id")|tojson }},
+            err_player_name: {{ t("pf_err_player_name")|tojson }},
+            err_no_day: {{ t("pf_err_no_day")|tojson }},
+            err_no_slots: {{ t("pf_err_no_slots")|tojson }},
+            construction: {{ t("pf_construction")|tojson }},
+            training: {{ t("pf_training")|tojson }},
+            research: {{ t("pf_research")|tojson }}
+        };
 
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -1081,7 +1088,7 @@
 
                     e.preventDefault();
 
-                    alert("Player ID must be numeric.");
+                    alert(I18N.err_player_id);
 
                     return;
 
@@ -1092,7 +1099,7 @@
 
                     e.preventDefault();
 
-                    alert("Please enter a valid Player Name.");
+                    alert(I18N.err_player_name);
 
                     return;
 
@@ -1103,7 +1110,7 @@
 
                     {
                         id: 'construction',
-                        name: 'Construction',
+                        name: I18N.construction,
                         speedups: 'speedups-construction',
                         gold: 'truegold',
                         gold2: 'tempered_truegold',
@@ -1112,14 +1119,14 @@
 
                     {
                         id: 'training',
-                        name: 'Training',
+                        name: I18N.training,
                         speedups: 'speedups-training',
                         slots: 'slots-input-training'
                     },
 
                     {
                         id: 'research',
-                        name: 'Research',
+                        name: I18N.research,
                         speedups: 'speedups-research',
                         gold: 'truegold_dust',
                         slots: 'slots-input-research'
@@ -1189,7 +1196,7 @@
                     e.preventDefault();
 
                     alert(
-                        "Please enter resource data for at least one event day."
+                        I18N.err_no_day
                     );
 
                     return;
@@ -1202,8 +1209,7 @@
                     e.preventDefault();
 
                     alert(
-                        "You must select at least one time slot for: " +
-                        daysInvalid.join(", ")
+                        I18N.err_no_slots + daysInvalid.join(", ")
                     );
 
                     return;
