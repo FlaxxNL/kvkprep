@@ -108,29 +108,45 @@
             <p class="text-sm text-gray-500 mb-3">
                 Language
             </p>
-            <div class="flex flex-wrap justify-center gap-3">
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇬🇧 English
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇹🇷 Türkçe
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇷🇺 Русский
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇪🇸 Español
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇫🇷 Français
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇩🇪 Deutsch
-                </button>
-                <button class="text-gray-300 hover:text-kvk-gold">
-                    🇳🇱 Nederlands
-                </button>
-            </div>
+<div class="flex flex-wrap justify-center gap-3">
+
+    {% for code, name in supported_languages.items() %}
+
+        <a href="{{ url_for('set_language', language=code) }}"
+           class="px-3 py-2 rounded-lg transition
+           {% if current_language == code %}
+               bg-kvk-gold text-gray-900 font-bold
+           {% else %}
+               text-gray-300 hover:text-kvk-gold hover:bg-kvk-gray-700
+           {% endif %}">
+
+            {% if code == "en" %}
+                🇬🇧
+            {% elif code == "tr" %}
+                🇹🇷
+            {% elif code == "ru" %}
+                🇷🇺
+            {% elif code == "uk" %}
+                🇺🇦
+            {% elif code == "es" %}
+                🇪🇸
+            {% elif code == "fr" %}
+                🇫🇷
+            {% elif code == "de" %}
+                🇩🇪
+            {% elif code == "pl" %}
+                🇵🇱
+            {% elif code == "it" %}
+                🇮🇹
+            {% elif code == "pt" %}
+                🇵🇹
+            {% elif code == "nl" %}
+                🇳🇱
+            {% endif %}
+            {{ name }}
+        </a>
+    {% endfor %}
+</div>
             <p class="text-xs text-gray-600 mt-3">
                 More languages coming soon.
             </p>
