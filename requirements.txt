@@ -4,3 +4,4 @@ gunicorn
 python-dotenv
 requests
 markdown
+Flask-Babel==4.0.0
