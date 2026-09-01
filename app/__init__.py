@@ -77,11 +77,42 @@ def generate_slot_labels(slot_count=49):
 
 def create_app():
     app = Flask(__name__)
-    babel = Babel(app)
     app.config.from_object(Config)
+    babel = Babel(app)
     CSRFProtect(app)
     database.init_app(app)
 
+    SUPPORTED_LANGUAGES = {
+        "en": "English",
+        "tr": "Türkçe",
+        "ru": "Русский",
+        "uk": "Українська",
+        "es": "Español",
+        "fr": "Français",
+        "de": "Deutsch",
+        "pl": "Polski",
+        "it": "Italiano",
+        "pt": "Português",
+        "nl": "Nederlands",
+    }
+
+    def get_locale():
+        return session.get("language", "en")
+
+    @app.route("/language/<language>")
+    def set_language(language):
+        if language in SUPPORTED_LANGUAGES:
+            session["language"] = language
+
+        return redirect(request.referrer or url_for("index"))
+
+    @app.context_processor
+    def inject_language_data():
+        return {
+            "supported_languages": SUPPORTED_LANGUAGES,
+            "current_language": get_locale(),
+        }
+    
     # Setup Audit Logging
     log_dir = os.path.join(app.root_path, "..", "logs")
     os.makedirs(log_dir, exist_ok=True)
