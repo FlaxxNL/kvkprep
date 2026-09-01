@@ -93,4 +93,68 @@
                            name="custom_slug"
                            id="custom_slug"
                            placeholder="kvk-962"
-        
+                           class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
+                </div>
+                <p class="text-xs text-gray-500 mt-1">
+                    Leave empty for an automatically generated link.
+                </p>
+            </div>
+
+            <!-- Research day -->
+            <div>
+                <label for="research_day"
+                       class="block text-sm font-medium text-gray-300 mb-1">
+                    Research day
+                </label>
+                <select name="research_day"
+                        id="research_day"
+                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
+                    <option value="5" selected>Day 5</option>
+                    <option value="2">Day 2</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">
+                    Choose on which day the research event takes place.
+                </p>
+            </div>
+
+            <!-- Slot count -->
+            <div>
+                <label for="slot_count"
+                       class="block text-sm font-medium text-gray-300 mb-1">
+                    Time slots
+                </label>
+                <select name="slot_count"
+                        id="slot_count"
+                        class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
+                    <option value="49" selected>49</option>
+                    <option value="48">48</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">
+                    49 slots starts 15 minutes before the hour, 48 slots starts on the hour.
+                </p>
+            </div>
+
+            <!-- Warning -->
+            <div class="bg-kvk-gray-900 border border-kvk-gold/40 rounded-lg p-4">
+                <p class="text-sm text-gray-300">
+                    ⚠️ You will receive an admin link after creating. Save it carefully,
+                    it is the only way to manage this event.
+                </p>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-kvk-gold text-kvk-gray-900 font-bold py-3 px-4 rounded-md hover:bg-amber-500 transition duration-300">
+                Create event
+            </button>
+        </form>
+
+        <!-- Back link -->
+        <div class="text-center mt-8">
+            {{ url_for('index') }}ition text-sm">
+                ← Back to home
+            </a>
+        </div>
+
+    </div>
+</body>
+</html>
