@@ -736,7 +736,10 @@ def create_app():
     def add_security_headers(response):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["Referrer-Policy"] = "no-referrer"
+        # same-origin: the browser sends the Referer only to this site (needed for
+        # Flask-WTF's CSRF check over HTTPS) and never to external sites, so the
+        # admin secret in the URL does not leak.
+        response.headers["Referrer-Policy"] = "same-origin"
         response.headers["Strict-Transport-Security"] = (
             "max-age=31536000; includeSubDomains"
         )
