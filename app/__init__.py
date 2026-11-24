@@ -24,6 +24,7 @@ from flask import (
     url_for,
 )
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 
 from config import Config
@@ -78,6 +79,21 @@ def generate_slot_labels(slot_count=49):
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Railway and Azure App Service terminate HTTPS at their proxy and forward
+    # plain HTTP. Trust the proxy's X-Forwarded-Proto/Host so generated links
+    # (player, admin and schedule URLs) use https:// instead of http://.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+    # On Railway / Azure App Service the app is publicly reachable: refuse to
+    # start with the built-in development secrets, which are in the source code.
+    hosted = os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("WEBSITE_SITE_NAME")
+    if hosted and not (
+        os.environ.get("SECRET_KEY") and os.environ.get("SUPERADMIN_SECRET")
+    ):
+        raise RuntimeError(
+            "SECRET_KEY and SUPERADMIN_SECRET must be set as environment variables."
+        )
     babel = Babel(app)
     CSRFProtect(app)
     database.init_app(app)
