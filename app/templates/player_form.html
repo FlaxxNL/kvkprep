@@ -442,16 +442,11 @@
 
                     <!-- Research -->
                     {% elif day == 'research' %}
-                    {% set research_both = 'research2' in active_days %}
 
                     <div class="p-4 rounded-lg bg-kvk-gray-900 border border-kvk-gray-700">
 
                         <h3 class="font-bold text-xl mb-2 text-blue-500">
-                            {% if research_both %}
-                            {{ t("pf_day") }} {{ research_day_number('research', event.active_days) }} &amp; {{ research_day_number('research2', event.active_days) }}: {{ t("pf_research") }}
-                            {% else %}
-                            {{ t("pf_day") }} {{ research_day_number('research', event.active_days) }}: {{ t("pf_research") }}
-                            {% endif %}
+                            {{ t("pf_day") }} {{ event.active_days.research_day if event.active_days.research_day else '5' }}: {{ t("pf_research") }}
                         </h3>
 
                         <p class="text-xs text-gray-400 mb-4 italic">
@@ -573,11 +568,6 @@
                         </div>
 
 
-                        {% if research_both %}
-                        <h4 class="font-semibold text-sm text-gray-300 mb-2">
-                            {{ t("pf_day") }} {{ research_day_number('research', event.active_days) }}
-                        </h4>
-                        {% endif %}
                         <div id="slot-grid-research"
                              class="grid grid-cols-7 gap-1 mb-4">
 
@@ -599,33 +589,6 @@
                         <input type="hidden"
                                name="slots-research"
                                id="slots-input-research">
-
-                        {% if research_both %}
-                        <h4 class="font-semibold text-sm text-gray-300 mb-2">
-                            {{ t("pf_day") }} {{ research_day_number('research2', event.active_days) }}
-                        </h4>
-                        <div id="slot-grid-research2"
-                             class="grid grid-cols-7 gap-1 mb-4">
-
-                            {% for i in range(slot_labels|length) %}
-
-                            <div class="slot"
-                                 data-index="{{ i }}">
-
-                                <div class="slot-content">
-                                    {{ slot_labels[i] }}
-                                </div>
-
-                            </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                        <input type="hidden"
-                               name="slots-research2"
-                               id="slots-input-research2">
-                        {% endif %}
 
                     </div>
 
@@ -763,6 +726,45 @@
 
                     </div>
 
+
+                    <!-- Combo: day 5, construction + research (optional) -->
+                    {% elif day == 'combo' %}
+
+                    <div class="p-4 rounded-lg bg-kvk-gray-900 border border-kvk-gray-700">
+
+                        <h3 class="font-bold text-xl mb-2 text-purple-400">
+                            {{ t("pf_day") }} 5: {{ t("pf_construction") }} + {{ t("pf_research") }}
+                            <span class="text-sm font-normal text-gray-400">({{ t("pf_optional") }})</span>
+                        </h3>
+
+                        <p class="text-xs text-gray-400 mb-4 italic">
+                            {{ t("pf_combo_help") }}
+                        </p>
+
+                        <div id="slot-grid-combo"
+                             class="grid grid-cols-7 gap-1 mb-4">
+
+                            {% for i in range(slot_labels|length) %}
+
+                            <div class="slot"
+                                 data-index="{{ i }}">
+
+                                <div class="slot-content">
+                                    {{ slot_labels[i] }}
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <input type="hidden"
+                               name="slots-combo"
+                               id="slots-input-combo">
+
+                    </div>
+
                     {% endif %}
 
                 {% endfor %}
@@ -782,7 +784,7 @@
         <!-- Footer -->
         <footer class="mt-12 pb-8 text-center border-t border-kvk-gray-700 pt-8">
 
-            <a href="https://github.com/prashmohan/kingdom-appt-planner"
+            <a href="https://github.com/FlaxxNL/kvkprep"
                target="_blank"
                class="text-gray-500 hover:text-kvk-gold transition inline-block">
 
@@ -810,7 +812,8 @@
             err_no_slots: {{ t("pf_err_no_slots")|tojson }},
             construction: {{ t("pf_construction")|tojson }},
             training: {{ t("pf_training")|tojson }},
-            research: {{ t("pf_research")|tojson }}
+            research: {{ t("pf_research")|tojson }},
+            err_combo_no_resources: {{ t("pf_err_combo_no_resources")|tojson }}
         };
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -910,7 +913,7 @@
             initializeGrid('slot-grid-construction');
             initializeGrid('slot-grid-training');
             initializeGrid('slot-grid-research');
-            initializeGrid('slot-grid-research2');
+            initializeGrid('slot-grid-combo');
 
 
             // Speedup Unit Selection
@@ -1152,7 +1155,9 @@
                         speedups: 'speedups-construction',
                         gold: 'truegold',
                         gold2: 'tempered_truegold',
-                        slots: 'slots-input-construction'
+                        slots: 'slots-input-construction',
+                        // Day 5 combo slots also count as a choice for these resources
+                        extraSlots: 'slots-input-combo'
                     },
 
                     {
@@ -1168,8 +1173,7 @@
                         speedups: 'speedups-research',
                         gold: 'truegold_dust',
                         slots: 'slots-input-research',
-                        // Only present when research runs on both day 2 and day 5
-                        extraSlots: 'slots-input-research2'
+                        extraSlots: 'slots-input-combo'
                     }
 
                 ];
@@ -1253,6 +1257,34 @@
                     );
 
                     return;
+
+                }
+
+
+                // Combo slots picked without any construction or research resources
+                const comboInput = document.getElementById('slots-input-combo');
+
+                if (comboInput) {
+
+                    const comboSlots = JSON.parse(comboInput.value || "[]");
+
+                    const comboResources = [
+                        'speedups-construction', 'truegold', 'tempered_truegold',
+                        'speedups-research', 'truegold_dust'
+                    ].some(id => {
+                        const el = document.getElementById(id);
+                        return el && parseInt(el.value || 0) > 0;
+                    });
+
+                    if (comboSlots.length > 0 && !comboResources) {
+
+                        e.preventDefault();
+
+                        alert(I18N.err_combo_no_resources);
+
+                        return;
+
+                    }
 
                 }
 

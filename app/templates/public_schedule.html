@@ -110,12 +110,14 @@
 
                 <h2 class="text-2xl font-bold mb-4 capitalize text-gray-100">
 
-                    {% if day in ('research', 'research2') %}
+                    {% if day == 'research' %}
 
                         {{ t('Research') }}
                         ({{ t('Day') }}
                         {{ research_day_number(day, event.active_days) }})
 
+                    {% elif day == 'combo' %}
+                        {{ t('Construction') }} + {{ t('Research') }} ({{ t('Day') }} 5)
                     {% else %}
 
                         {{ t(day|capitalize) }}
