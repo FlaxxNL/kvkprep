@@ -116,11 +116,11 @@
                         class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
                         data-target="tab-{{ day }}">
 
-                        {% if day == 'research' %}
+                        {% if day in ('research', 'research2') %}
 
                             {{ t('Research') }}
                             ({{ t('Day') }}
-                            {{ event.active_days.research_day if event.active_days.research_day else '5' }})
+                            {{ research_day_number(day, event.active_days) }})
 
                         {% else %}
 
@@ -151,11 +151,11 @@
 
                     <h2 class="text-2xl font-bold mb-6 text-center text-gray-100 capitalize">
 
-                        {% if day == 'research' %}
+                        {% if day in ('research', 'research2') %}
 
                             {{ t('Research') }}
                             ({{ t('Day') }}
-                            {{ event.active_days.research_day if event.active_days.research_day else '5' }})
+                            {{ research_day_number(day, event.active_days) }})
 
                         {% else %}
 
