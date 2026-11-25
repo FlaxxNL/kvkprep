@@ -162,6 +162,9 @@ def create_app():
             "pf_err_player_name": "Please enter a valid Player Name.",
             "pf_err_no_day": "Please enter resource data for at least one event day.",
             "pf_err_no_slots": "You must select at least one time slot for: ",
+            "pf_optional": "optional",
+            "pf_combo_help": "Construction and research run together on day 5. Your construction and research resources from above are added up. Select time slots only if you want to join day 5.",
+            "pf_err_combo_no_resources": "You selected day 5 time slots, but entered no construction or research resources.",
         },
 
         "tr": {
@@ -709,7 +712,7 @@ def create_app():
     audit_logger.addHandler(audit_handler)
     app.audit_logger = audit_logger
 
-    # Research day number per schedule ("research" or "research2") for templates
+    # Research day number (2 or 5) for templates
     app.jinja_env.globals["research_day_number"] = research_day_number
 
     # Make the label generator available to all templates
@@ -801,7 +804,6 @@ def create_app():
         if not event_name:
             event_name = "Untitled Event"
 
-        research_day = request.form.get("research_day", "5")
         try:
             slot_count = int(request.form.get("slot_count", "49"))
             if slot_count not in [48, 49]:
@@ -831,22 +833,15 @@ def create_app():
 
         admin_secret = secrets.token_urlsafe(16)
 
-        # "both" = research on day 2 AND day 5: two separate research schedules.
-        # "research" is then day 2 and "research2" is day 5.
-        research_both = research_day == "both"
-        if research_both:
-            research_day_num = 2
-        else:
-            research_day_num = 2 if research_day == "2" else 5
-
+        # Fixed KvK layout: day 1 construction, day 2 research, day 4 training,
+        # day 5 combo (construction + research, scored as the sum of both).
         active_days = {
             "construction": True,
             "training": True,
             "research": True,
-            "research_day": research_day_num,
+            "research_day": 2,
+            "combo": True,
         }
-        if research_both:
-            active_days["research2"] = True
 
         raw_server_id = request.form.get("server_id", "").strip()
         server_id = None
@@ -1105,25 +1100,12 @@ def create_app():
                 ),
             )
 
-        # --- Process Research Submission(s) ---
-        # Speedups and dust are entered once; with research on both day 2 and
-        # day 5 they count for each research day the player picked slots for.
+        # --- Process Research Submission ---
         research_speedups = int(request.form.get("speedups-research") or 0)
         truegold_dust = int(request.form.get("truegold_dust") or 0)
-        research_day_types = ["research"]
-        event_days_row = db.execute(
-            "SELECT active_days FROM events WHERE uid = ?", (event_uid,)
-        ).fetchone()
-        if event_days_row and "research2" in get_ordered_active_days(
-            event_days_row[0]
-        ):
-            research_day_types.append("research2")
-        for day_type in research_day_types:
-            feasible_slots = request.form.get(f"slots-{day_type}", "[]")
-            if not (
-                (research_speedups > 0 or truegold_dust > 0) and feasible_slots != "[]"
-            ):
-                continue
+        feasible_slots = request.form.get("slots-research", "[]")
+        if (research_speedups > 0 or truegold_dust > 0) and feasible_slots != "[]":
+            day_type = "research"
             score = (research_speedups * 30) + (truegold_dust * 1000)
             raw_data = {"speedups": research_speedups, "truegold_dust": truegold_dust}
             submission_id = f"{event_uid}_{player_id}_{day_type}"
@@ -1140,6 +1122,38 @@ def create_app():
                     alliance_name,
                     score,
                     json.dumps(raw_data),
+                    feasible_slots,
+                ),
+            )
+
+        # --- Process Combo Submission (day 5: construction + research) ---
+        # Reuses the construction and research resources entered above; the
+        # combo score is the sum of both. Optional: only when slots are picked.
+        feasible_slots = request.form.get("slots-combo", "[]")
+        combo_raw = {
+            "speedups_construction": construction_speedups,
+            "truegold": truegold,
+            "tempered_truegold": tempered_truegold,
+            "speedups_research": research_speedups,
+            "truegold_dust": truegold_dust,
+        }
+        if any(v > 0 for v in combo_raw.values()) and feasible_slots != "[]":
+            day_type = "combo"
+            score = logic.combo_score(combo_raw)
+            submission_id = f"{event_uid}_{player_id}_{day_type}"
+            db.execute(
+                "INSERT INTO submissions (id, event_uid, day_type, player_name, player_id, avatar_url, backpack_url, alliance_name, resources, raw_data, feasible_slots) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (
+                    submission_id,
+                    event_uid,
+                    day_type,
+                    player_name,
+                    player_id,
+                    avatar_url,
+                    backpack_url,
+                    alliance_name,
+                    score,
+                    json.dumps(combo_raw),
                     feasible_slots,
                 ),
             )
@@ -1289,10 +1303,27 @@ def create_app():
                             parts.append(
                                 f"Speedups: {format_minutes(raw_resources['speedups'])}"
                             )
-                    elif day in ("research", "research2"):
+                    elif day == "research":
                         if raw_resources.get("speedups"):
                             parts.append(
                                 f"Speedups: {format_minutes(raw_resources['speedups'])}"
+                            )
+                        if raw_resources.get("truegold_dust"):
+                            parts.append(f"Dust: {raw_resources['truegold_dust']}")
+                    elif day == "combo":
+                        if raw_resources.get("speedups_construction"):
+                            parts.append(
+                                f"Constr. speedups: {format_minutes(raw_resources['speedups_construction'])}"
+                            )
+                        if raw_resources.get("truegold"):
+                            parts.append(f"Truegold: {raw_resources['truegold']}")
+                        if raw_resources.get("tempered_truegold"):
+                            parts.append(
+                                f"Tempered Gold: {raw_resources['tempered_truegold']}"
+                            )
+                        if raw_resources.get("speedups_research"):
+                            parts.append(
+                                f"Research speedups: {format_minutes(raw_resources['speedups_research'])}"
                             )
                         if raw_resources.get("truegold_dust"):
                             parts.append(f"Dust: {raw_resources['truegold_dust']}")
@@ -1958,11 +1989,17 @@ def create_app():
                 speedups = int(request.form.get("speedups") or 0)
                 score = speedups * 90
                 raw_data = {"speedups": speedups}
-            elif day_type in ("research", "research2"):
+            elif day_type == "research":
                 speedups = int(request.form.get("speedups") or 0)
                 truegold_dust = int(request.form.get("truegold_dust") or 0)
                 score = (speedups * 30) + (truegold_dust * 1000)
                 raw_data = {"speedups": speedups, "truegold_dust": truegold_dust}
+            elif day_type == "combo":
+                raw_data = {
+                    key: int(request.form.get(key) or 0)
+                    for key in logic.COMBO_RESOURCE_KEYS
+                }
+                score = logic.combo_score(raw_data)
             else:
                 return "Invalid day type", 400
         except ValueError:

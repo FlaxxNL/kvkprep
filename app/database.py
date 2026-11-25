@@ -5,13 +5,19 @@ from flask import g
 
 DATABASE_PATH = os.environ.get("DATABASE_PATH", "data/planner.db")
 
+# WAL is fastest on a local disk but unsafe on network shares (Azure Files,
+# used by App Service /home). Set SQLITE_JOURNAL_MODE=DELETE there.
+_ALLOWED_JOURNAL_MODES = {"WAL", "DELETE", "TRUNCATE", "PERSIST"}
+SQLITE_JOURNAL_MODE = os.environ.get("SQLITE_JOURNAL_MODE", "WAL").upper()
+if SQLITE_JOURNAL_MODE not in _ALLOWED_JOURNAL_MODES:
+    SQLITE_JOURNAL_MODE = "WAL"
+
 
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE_PATH, timeout=30.0)
-        # Enable WAL mode for significantly better concurrency
-        db.execute("PRAGMA journal_mode=WAL")
+        db.execute(f"PRAGMA journal_mode={SQLITE_JOURNAL_MODE}")
         # Enforce foreign key constraints
         db.execute("PRAGMA foreign_keys = ON")
     return db

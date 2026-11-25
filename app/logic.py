@@ -232,16 +232,38 @@ def format_minutes(total_minutes):
     return " ".join(parts)
 
 
-# When an event runs research on both day 2 and day 5, the second research
-# schedule uses day_type "research2" and always falls on day 5.
-RESEARCH_DAY_TYPES = ("research", "research2")
-RESEARCH2_DAY = 5
+# Day 5 "combo" schedule: construction + research buffs at the same time.
+COMBO_DAY = 5
+COMBO_RESOURCE_KEYS = (
+    "speedups_construction",
+    "truegold",
+    "tempered_truegold",
+    "speedups_research",
+    "truegold_dust",
+)
+
+
+def combo_score(raw):
+    """Combo score = construction score + research score (same weights as the
+    separate construction and research days)."""
+
+    def val(key):
+        try:
+            return max(int(raw.get(key) or 0), 0)
+        except (ValueError, TypeError):
+            return 0
+
+    construction = (
+        val("speedups_construction") * 30
+        + val("truegold") * 2000
+        + val("tempered_truegold") * 30000
+    )
+    research = val("speedups_research") * 30 + val("truegold_dust") * 1000
+    return construction + research
 
 
 def research_day_number(day, active_days_config):
-    """Day number shown for a research schedule ("research" or "research2")."""
-    if day == "research2":
-        return RESEARCH2_DAY
+    """Day number shown for the research schedule."""
     if isinstance(active_days_config, str):
         try:
             active_days_config = json.loads(active_days_config)
@@ -270,7 +292,7 @@ def get_ordered_active_days(active_days_config):
         return [
             d
             for d in active_days_config
-            if d in ("construction", "training", "research", "research2")
+            if d in ("construction", "training", "research", "combo")
         ]
     if not isinstance(active_days_config, dict):
         return []
@@ -284,12 +306,12 @@ def get_ordered_active_days(active_days_config):
         "construction": 1,
         "training": 4,
         "research": research_day_num,
-        "research2": RESEARCH2_DAY,
+        "combo": COMBO_DAY,
     }
 
     active = [
         day
-        for day in ["construction", "training", "research", "research2"]
+        for day in ["construction", "training", "research", "combo"]
         if active_days_config.get(day)
     ]
     return sorted(active, key=lambda d: day_numbers.get(d, 99))
@@ -345,6 +367,7 @@ def get_superadmin_metrics(
                 "construction": {"submissions": 0, "assignments": 0},
                 "training": {"submissions": 0, "assignments": 0},
                 "research": {"submissions": 0, "assignments": 0},
+                "combo": {"submissions": 0, "assignments": 0},
             },
             "peak_time_slots": [],
             "superlatives": {
@@ -488,18 +511,15 @@ def get_superadmin_metrics(
         "construction": {"submissions": 0, "assignments": 0},
         "training": {"submissions": 0, "assignments": 0},
         "research": {"submissions": 0, "assignments": 0},
+        "combo": {"submissions": 0, "assignments": 0},
     }
     for s in submissions:
         day = s.get("day_type")
-        if day == "research2":
-            day = "research"
         if day in buff_distribution:
             buff_distribution[day]["submissions"] += 1
 
     for a in assignments:
         day = a.get("day_type")
-        if day == "research2":
-            day = "research"
         if day in buff_distribution:
             buff_distribution[day]["assignments"] += 1
 
