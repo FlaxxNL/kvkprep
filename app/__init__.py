@@ -35,6 +35,7 @@ from .logic import (
     generate_short_uid,
     get_ordered_active_days,
     get_superadmin_metrics,
+    research_day_number,
     validate_custom_slug,
 )
 
@@ -708,6 +709,9 @@ def create_app():
     audit_logger.addHandler(audit_handler)
     app.audit_logger = audit_logger
 
+    # Research day number per schedule ("research" or "research2") for templates
+    app.jinja_env.globals["research_day_number"] = research_day_number
+
     # Make the label generator available to all templates
     @app.context_processor
     def inject_global_config():
@@ -827,12 +831,22 @@ def create_app():
 
         admin_secret = secrets.token_urlsafe(16)
 
+        # "both" = research on day 2 AND day 5: two separate research schedules.
+        # "research" is then day 2 and "research2" is day 5.
+        research_both = research_day == "both"
+        if research_both:
+            research_day_num = 2
+        else:
+            research_day_num = 2 if research_day == "2" else 5
+
         active_days = {
             "construction": True,
             "training": True,
             "research": True,
-            "research_day": int(research_day),
+            "research_day": research_day_num,
         }
+        if research_both:
+            active_days["research2"] = True
 
         raw_server_id = request.form.get("server_id", "").strip()
         server_id = None
@@ -1091,12 +1105,25 @@ def create_app():
                 ),
             )
 
-        # --- Process Research Submission ---
+        # --- Process Research Submission(s) ---
+        # Speedups and dust are entered once; with research on both day 2 and
+        # day 5 they count for each research day the player picked slots for.
         research_speedups = int(request.form.get("speedups-research") or 0)
         truegold_dust = int(request.form.get("truegold_dust") or 0)
-        feasible_slots = request.form.get("slots-research", "[]")
-        if (research_speedups > 0 or truegold_dust > 0) and feasible_slots != "[]":
-            day_type = "research"
+        research_day_types = ["research"]
+        event_days_row = db.execute(
+            "SELECT active_days FROM events WHERE uid = ?", (event_uid,)
+        ).fetchone()
+        if event_days_row and "research2" in get_ordered_active_days(
+            event_days_row[0]
+        ):
+            research_day_types.append("research2")
+        for day_type in research_day_types:
+            feasible_slots = request.form.get(f"slots-{day_type}", "[]")
+            if not (
+                (research_speedups > 0 or truegold_dust > 0) and feasible_slots != "[]"
+            ):
+                continue
             score = (research_speedups * 30) + (truegold_dust * 1000)
             raw_data = {"speedups": research_speedups, "truegold_dust": truegold_dust}
             submission_id = f"{event_uid}_{player_id}_{day_type}"
@@ -1262,7 +1289,7 @@ def create_app():
                             parts.append(
                                 f"Speedups: {format_minutes(raw_resources['speedups'])}"
                             )
-                    elif day == "research":
+                    elif day in ("research", "research2"):
                         if raw_resources.get("speedups"):
                             parts.append(
                                 f"Speedups: {format_minutes(raw_resources['speedups'])}"
@@ -1931,7 +1958,7 @@ def create_app():
                 speedups = int(request.form.get("speedups") or 0)
                 score = speedups * 90
                 raw_data = {"speedups": speedups}
-            elif day_type == "research":
+            elif day_type in ("research", "research2"):
                 speedups = int(request.form.get("speedups") or 0)
                 truegold_dust = int(request.form.get("truegold_dust") or 0)
                 score = (speedups * 30) + (truegold_dust * 1000)

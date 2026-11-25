@@ -232,6 +232,29 @@ def format_minutes(total_minutes):
     return " ".join(parts)
 
 
+# When an event runs research on both day 2 and day 5, the second research
+# schedule uses day_type "research2" and always falls on day 5.
+RESEARCH_DAY_TYPES = ("research", "research2")
+RESEARCH2_DAY = 5
+
+
+def research_day_number(day, active_days_config):
+    """Day number shown for a research schedule ("research" or "research2")."""
+    if day == "research2":
+        return RESEARCH2_DAY
+    if isinstance(active_days_config, str):
+        try:
+            active_days_config = json.loads(active_days_config)
+        except (json.JSONDecodeError, TypeError):
+            active_days_config = {}
+    if not isinstance(active_days_config, dict):
+        return 5
+    try:
+        return int(active_days_config.get("research_day", 5) or 5)
+    except (ValueError, TypeError):
+        return 5
+
+
 def get_ordered_active_days(active_days_config):
     """
     Returns active days sorted chronologically by day number.
@@ -247,7 +270,7 @@ def get_ordered_active_days(active_days_config):
         return [
             d
             for d in active_days_config
-            if d in ("construction", "training", "research")
+            if d in ("construction", "training", "research", "research2")
         ]
     if not isinstance(active_days_config, dict):
         return []
@@ -261,11 +284,12 @@ def get_ordered_active_days(active_days_config):
         "construction": 1,
         "training": 4,
         "research": research_day_num,
+        "research2": RESEARCH2_DAY,
     }
 
     active = [
         day
-        for day in ["construction", "training", "research"]
+        for day in ["construction", "training", "research", "research2"]
         if active_days_config.get(day)
     ]
     return sorted(active, key=lambda d: day_numbers.get(d, 99))
@@ -467,11 +491,15 @@ def get_superadmin_metrics(
     }
     for s in submissions:
         day = s.get("day_type")
+        if day == "research2":
+            day = "research"
         if day in buff_distribution:
             buff_distribution[day]["submissions"] += 1
 
     for a in assignments:
         day = a.get("day_type")
+        if day == "research2":
+            day = "research"
         if day in buff_distribution:
             buff_distribution[day]["assignments"] += 1
 
