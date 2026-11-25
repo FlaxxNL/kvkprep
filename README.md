@@ -29,7 +29,7 @@ Managing a kingdom of hundreds of players manually is a nightmare. This tool aut
 | :--- | :--- |
 | **Auto-Fetching** | Players enter their ID; the tool fetches their name and avatar directly from the game! |
 | **Smart Scheduling** | Prioritizes players based on Speedups, TrueGold, and availability. |
-| **Multi-Day Support** | Independent schedules for Construction (Day 1), Training (Day 4), and Research (Day 2 or 5). |
+| **Multi-Day Support** | Independent schedules for Construction (Day 1), Research (Day 2), Training (Day 4) and a combined Construction + Research day (Day 5). |
 | **Update Submissions** | Players can re-submit at any time; new entries automatically replace old ones to keep data fresh. |
 | **Verification System** | Players can upload backpack screenshots for admins to verify resource claims. |
 | **Heatmap Analytics** | Visualize alliance contributions and slot distribution at a glance. |
@@ -77,7 +77,7 @@ To ensure the Kingdom generates the absolute maximum points during KvK, the plan
 ## 📖 Administrator's Guide
 
 ### Step 1: Launch your Event
-Give your event a name (e.g., "KvK Season 12") and select whether your kingdom runs Research on **Day 2** or **Day 5**. Save the **Admin URL**—this is your private key!
+Give your event a name (e.g., "KvK Season 12"). Every event uses the same days: Construction (Day 1), Research (Day 2), Training (Day 4) and Construction + Research combined (Day 5). On Day 5 a player's construction and research scores are added up; joining Day 5 is optional for players. Save the **Admin URL**—this is your private key!
 
 ### Step 2: Data Collection & Verification
 Share the **Player URL** with your kingdom. 
@@ -99,8 +99,8 @@ The application is fully containerized for a one-command deployment.
 
 *   **Clone the Repository:**
 ```bash
-git clone https://github.com/prashmohan/kingdom-appt-planner.git
-cd kingdom-appt-planner
+git clone https://github.com/FlaxxNL/kvkprep.git
+cd kvkprep
 ```
 
 *   **Configure Environment Variables:**

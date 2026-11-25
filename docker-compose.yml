@@ -6,7 +6,6 @@ services:
       - "12348:5000"
     volumes:
       - planner_data:/app/data
-      - planner_uploads:/app/app/static/uploads
     env_file:
       - .env
     environment:
@@ -18,4 +17,3 @@ services:
       - 1.1.1.1
 volumes:
   planner_data:
-  planner_uploads:
