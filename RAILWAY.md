@@ -13,11 +13,11 @@ dan blijft alles bewaard bij elke redeploy.
    |---|---|
    | `SECRET_KEY` | lange willekeurige tekst (bijv. `python -c "import secrets;print(secrets.token_urlsafe(48))"`) |
    | `SUPERADMIN_SECRET` | andere lange willekeurige tekst |
-   | `EXTERNAL_API_SECRET` | de API-sleutel voor het ophalen van spelersnamen |
+   | `MIGHTPULSE_API_KEY` | optioneel: API-key van https://api.mightpulse.com (inloggen met Discord → Create API key). Vult naam, avatar en alliance automatisch in na het invullen van een Player ID. Zonder key typen spelers hun naam zelf. |
    | `SESSION_COOKIE_SECURE` | `true` |
 
    Zonder `SECRET_KEY` en `SUPERADMIN_SECRET` start de app op Railway bewust niet.
-4. **Domein**: Settings → Networking → **Generate Domain**. De app luistert op Railway's `$PORT`.
+4. **Domein**: Settings → Networking → **Generate Domain**. De app luistert op Railway's `$PORT` (meestal 8080); de target port van het domein moet daarmee overeenkomen.
 
 ## Controleren
 

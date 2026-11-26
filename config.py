@@ -16,6 +16,11 @@ class Config:
     )
     GA_MEASUREMENT_ID = os.environ.get("GA_MEASUREMENT_ID")
     EXTERNAL_API_SECRET = os.environ.get("EXTERNAL_API_SECRET", "mN4!pQs6JrYwV9")
+    # Player lookup (name/avatar/alliance) via https://api.mightpulse.com
+    MIGHTPULSE_API_KEY = os.environ.get("MIGHTPULSE_API_KEY")
+    MIGHTPULSE_BASE_URL = os.environ.get(
+        "MIGHTPULSE_BASE_URL", "https://api.mightpulse.com/v1"
+    )
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB upload limit
 
     # Session cookie security defaults

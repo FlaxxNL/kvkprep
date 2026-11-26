@@ -43,7 +43,7 @@ az webapp config appsettings set -g $RG -n $APP --settings \
   SECRET_KEY="$(python3 -c 'import secrets;print(secrets.token_urlsafe(48))')" \
   SUPERADMIN_SECRET="$(python3 -c 'import secrets;print(secrets.token_urlsafe(32))')"
 
-# EXTERNAL_API_SECRET apart zetten (niet in je shell-history):
+# Optioneel MIGHTPULSE_API_KEY (spelersnaam/avatar opzoeken) apart zetten, niet in je shell-history:
 #   Portal → App Service → Settings → Environment variables → + Add
 
 az webapp update -g $RG -n $APP --https-only true

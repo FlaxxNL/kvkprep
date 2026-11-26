@@ -177,6 +177,7 @@
                         <label for="player_id"
                                class="block text-sm font-medium text-gray-300 mb-1">
                             {{ t("pf_player_id") }}
+                            <span id="fetch-status" class="ml-2 text-xs font-normal"></span>
                         </label>
 
                         <input type="text"
@@ -191,8 +192,17 @@
                     </div>
 
 
-                    <!-- Player Name -->
-                    <div>
+                    <!-- Player Name (avatar filled in by the player lookup) -->
+                    <div class="flex items-end gap-3">
+
+                        {% if player_lookup_enabled() %}
+                        <div id="avatar-container" class="w-10 h-10 mb-0.5 rounded-full bg-kvk-gray-900 border border-kvk-gray-700 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                            <img id="player-avatar" src="" alt="" class="w-full h-full object-cover hidden" referrerpolicy="no-referrer">
+                            <span id="avatar-placeholder" class="text-gray-500 text-xs font-semibold">?</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex-grow">
 
                         <label for="player_name"
                                class="block text-sm font-medium text-gray-300 mb-1">
@@ -205,6 +215,8 @@
                                required
                                placeholder="{{ t('pf_player_name_ph') }}"
                                class="block w-full bg-kvk-gray-700 border-kvk-gray-700 rounded-md shadow-sm text-gray-200 focus:border-kvk-gold focus:ring focus:ring-kvk-gold focus:ring-opacity-50">
+
+                        </div>
 
                     </div>
 
@@ -226,6 +238,9 @@
                     </div>
 
                 </div>
+
+
+                <input type="hidden" name="avatar_url" id="avatar_url_input">
 
 
                 <!-- Screenshot Upload -->
@@ -813,8 +828,13 @@
             construction: {{ t("pf_construction")|tojson }},
             training: {{ t("pf_training")|tojson }},
             research: {{ t("pf_research")|tojson }},
-            err_combo_no_resources: {{ t("pf_err_combo_no_resources")|tojson }}
+            err_combo_no_resources: {{ t("pf_err_combo_no_resources")|tojson }},
+            fetching: {{ t("pf_fetching")|tojson }},
+            found: {{ t("pf_found")|tojson }},
+            not_found: {{ t("pf_not_found")|tojson }},
+            lookup_unavailable: {{ t("pf_lookup_unavailable")|tojson }}
         };
+        const PLAYER_LOOKUP_ENABLED = {{ 'true' if player_lookup_enabled() else 'false' }};
 
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -1111,6 +1131,74 @@
                 });
 
             });
+
+
+            // Player lookup (MightPulse via /api/proxy/player)
+            (function () {
+                if (!PLAYER_LOOKUP_ENABLED) return;
+                const idInput = document.getElementById('player_id');
+                const nameInput = document.getElementById('player_name');
+                const allianceInput = document.getElementById('alliance_name');
+                const statusSpan = document.getElementById('fetch-status');
+                const avatarImg = document.getElementById('player-avatar');
+                const avatarPlaceholder = document.getElementById('avatar-placeholder');
+                const avatarUrlInput = document.getElementById('avatar_url_input');
+                let lastFid = '';
+
+                function resetAvatar() {
+                    avatarUrlInput.value = '';
+                    avatarImg.classList.add('hidden');
+                    avatarImg.removeAttribute('src');
+                    avatarPlaceholder.classList.remove('hidden');
+                }
+
+                function setStatus(text, cls) {
+                    statusSpan.textContent = text;
+                    statusSpan.className = 'ml-2 text-xs font-normal ' + cls;
+                }
+
+                async function lookup() {
+                    const fid = idInput.value.trim();
+                    if (!/^\d+$/.test(fid)) { setStatus('', ''); resetAvatar(); lastFid = ''; return; }
+                    if (fid === lastFid) return;
+                    lastFid = fid;
+                    setStatus(I18N.fetching, 'text-blue-400');
+                    try {
+                        const csrf = document.querySelector('input[name="csrf_token"]').value;
+                        const resp = await fetch('/api/proxy/player', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                            body: JSON.stringify({ fid })
+                        });
+                        if (idInput.value.trim() !== fid) return;  // ID changed meanwhile
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            if (data.nickname) nameInput.value = data.nickname;
+                            if (data.alliance && !allianceInput.value.trim()) allianceInput.value = data.alliance;
+                            if (data.avatar_url) {
+                                avatarUrlInput.value = data.avatar_url;
+                                avatarImg.src = data.avatar_url;
+                                avatarImg.classList.remove('hidden');
+                                avatarPlaceholder.classList.add('hidden');
+                            } else {
+                                resetAvatar();
+                            }
+                            setStatus(I18N.found, 'text-green-400');
+                        } else {
+                            resetAvatar();
+                            setStatus(resp.status === 404 ? I18N.not_found : I18N.lookup_unavailable, 'text-amber-400');
+                            if (resp.status !== 404) lastFid = '';  // allow retry
+                        }
+                    } catch (err) {
+                        lastFid = '';
+                        resetAvatar();
+                        setStatus(I18N.lookup_unavailable, 'text-amber-400');
+                    }
+                }
+
+                idInput.addEventListener('change', lookup);
+                idInput.addEventListener('blur', lookup);
+            })();
 
 
             // Form Validation

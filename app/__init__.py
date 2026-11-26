@@ -16,6 +16,7 @@ from flask import (
     Flask,
     Response,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -29,7 +30,7 @@ from werkzeug.utils import secure_filename
 
 from config import Config
 
-from . import database, logic
+from . import database, logic, player_lookup
 from .logic import (
     format_minutes,
     generate_short_uid,
@@ -165,6 +166,10 @@ def create_app():
             "pf_optional": "optional",
             "pf_combo_help": "Construction and research run together on day 5. Your construction and research resources from above are added up. Select time slots only if you want to join day 5.",
             "pf_err_combo_no_resources": "You selected day 5 time slots, but entered no construction or research resources.",
+            "pf_fetching": "Looking up…",
+            "pf_found": "Success!",
+            "pf_not_found": "Not found, enter your name yourself",
+            "pf_lookup_unavailable": "Lookup unavailable",
         },
 
         "tr": {
@@ -292,6 +297,10 @@ def create_app():
             "pf_player_id_ph": "bijv. 12345678",
             "pf_player_name": "Spelersnaam",
             "pf_player_name_ph": "bijv. KingArthur",
+            "pf_fetching": "Opzoeken…",
+            "pf_found": "Gevonden!",
+            "pf_not_found": "Niet gevonden, vul je naam zelf in",
+            "pf_lookup_unavailable": "Opzoeken niet beschikbaar",
             "pf_alliance": "Alliantie",
             "pf_alliance_ph": "bijv. KVK",
             "pf_screenshot": "Screenshot rugzak (optioneel)",
@@ -714,6 +723,7 @@ def create_app():
 
     # Research day number (2 or 5) for templates
     app.jinja_env.globals["research_day_number"] = research_day_number
+    app.jinja_env.globals["player_lookup_enabled"] = player_lookup.lookup_enabled
 
     # Make the label generator available to all templates
     @app.context_processor
@@ -1918,6 +1928,57 @@ def create_app():
 
         db.commit()
 
+        return redirect(url_for("admin_dashboard", event_uid=event_uid, secret=secret))
+
+    @app.route("/api/proxy/player", methods=["POST"])
+    def proxy_player():
+        """Look up a player's name/avatar/alliance server-side (keeps the API key private)."""
+        if not player_lookup.lookup_enabled():
+            return jsonify({"error": "Lookup not configured"}), 503
+        data = request.get_json(silent=True)
+        fid = str((data or {}).get("fid") or "").strip() if isinstance(data, dict) else ""
+        if not fid.isdigit() or len(fid) > 20:
+            return jsonify({"error": "Invalid fid"}), 400
+        info = player_lookup.fetch_player_info(fid)
+        if not info:
+            return jsonify({"error": "Player not found"}), 404
+        return jsonify(info)
+
+    @app.route("/admin/<event_uid>/refresh_players", methods=["POST"])
+    def refresh_players(event_uid):
+        secret = request.form.get("secret")
+        db = database.get_db()
+        db.row_factory = sqlite3.Row
+        event = db.execute(
+            "SELECT * FROM events WHERE uid = ?", (event_uid,)
+        ).fetchone()
+        if event is None:
+            return "Event not found", 404
+        if not secret or not hmac.compare_digest(event["admin_secret"], secret):
+            return "Forbidden", 403
+
+        if not player_lookup.lookup_enabled():
+            flash("Player lookup is not configured (MIGHTPULSE_API_KEY).", "error")
+            return redirect(url_for("admin_dashboard", event_uid=event_uid, secret=secret))
+
+        players = db.execute(
+            "SELECT DISTINCT player_id FROM submissions WHERE event_uid = ?",
+            (event_uid,),
+        ).fetchall()
+        refreshed = 0
+        for p in players[:200]:
+            info = player_lookup.fetch_player_info(p["player_id"])
+            if info and info.get("nickname"):
+                db.execute(
+                    "UPDATE submissions SET player_name = ?, avatar_url = COALESCE(?, avatar_url) WHERE event_uid = ? AND player_id = ?",
+                    (info["nickname"], info.get("avatar_url"), event_uid, p["player_id"]),
+                )
+                refreshed += 1
+        db.commit()
+        app.audit_logger.info(
+            f"ADMIN: Refreshed player data for {refreshed}/{len(players)} players in event {event_uid}"
+        )
+        flash(f"Refreshed player details for {refreshed} of {len(players)} player(s).", "success")
         return redirect(url_for("admin_dashboard", event_uid=event_uid, secret=secret))
 
     @app.route("/admin/<event_uid>/update_alliance", methods=["POST"])
