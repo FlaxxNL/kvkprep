@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Lola – the AustrALIEN</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh; overflow-x: hidden;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            color: #f3f4f6; text-align: center;
+            background: radial-gradient(ellipse at top, #1e1b4b 0%, #0b1020 60%, #05070f 100%);
+        }
+        .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        main { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; }
+        h1 { font-size: clamp(2.4rem, 8vw, 4.5rem); margin: 0 0 6px; letter-spacing: 1px; font-weight: 900; }
+        h1 .aus { color: #fbbf24; }
+        h1 .alien { color: #4ade80; text-shadow: 0 0 18px rgba(74, 222, 128, .7); }
+        .sub { color: #a5b4fc; font-size: 1.15rem; margin: 0 0 24px; }
+        .lola { width: min(360px, 85vw); height: auto; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(74, 222, 128, .35)); }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+        .bubble {
+            display: inline-block; margin-top: 18px; padding: 14px 22px; border-radius: 18px;
+            background: #14532d; border: 2px solid #4ade80; font-size: 1.25rem; font-weight: 700;
+        }
+        .facts { margin: 28px auto 0; padding: 0; list-style: none; text-align: left; max-width: 460px; }
+        .facts li { background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; }
+        .roo { display: inline-block; animation: hop 1.2s ease-in-out infinite; }
+        @keyframes hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } }
+        a { color: #fbbf24; }
+        footer { margin-top: 30px; font-size: .85rem; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <svg class="stars" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="#fff">
+            <circle cx="8" cy="12" r=".25"/><circle cx="22" cy="30" r=".2"/><circle cx="35" cy="8" r=".3"/>
+            <circle cx="62" cy="18" r=".2"/><circle cx="77" cy="6" r=".3"/><circle cx="91" cy="24" r=".25"/>
+            <circle cx="12" cy="55" r=".2"/><circle cx="88" cy="60" r=".3"/><circle cx="50" cy="40" r=".15"/>
+            <circle cx="70" cy="85" r=".25"/><circle cx="18" cy="88" r=".3"/><circle cx="95" cy="92" r=".2"/>
+        </g>
+        <!-- Southern Cross -->
+        <g fill="#fde68a">
+            <circle cx="84" cy="34" r=".55"/><circle cx="86" cy="44" r=".55"/><circle cx="80" cy="40" r=".45"/>
+            <circle cx="90" cy="38" r=".5"/><circle cx="87.5" cy="41.5" r=".25"/>
+        </g>
+    </svg>
+
+    <main>
+        <h1><span class="aus">Austr</span><span class="alien">ALIEN</span></h1>
+        <p class="sub">Meet Lola, straight from Planet Down Under 🛸</p>
+
+        <!-- Lola: a female alien in a cork hat -->
+        <svg class="lola" viewBox="0 0 300 360" role="img" aria-label="Lola, a green female alien with big eyes, red lips and an Australian cork hat">
+            <!-- antennae with hearts -->
+            <path d="M118 78 Q100 30 82 22" stroke="#22c55e" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M182 78 Q200 30 218 22" stroke="#22c55e" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M82 30 l-9 -9 a6 6 0 0 1 9 -8 a6 6 0 0 1 9 8 z" fill="#f472b6"/>
+            <path d="M218 30 l-9 -9 a6 6 0 0 1 9 -8 a6 6 0 0 1 9 8 z" fill="#f472b6"/>
+
+            <!-- hair -->
+            <path d="M70 150 Q60 60 150 55 Q240 60 230 150 Q240 230 215 260 L85 260 Q60 230 70 150 Z" fill="#7c3aed"/>
+
+            <!-- head -->
+            <ellipse cx="150" cy="150" rx="72" ry="88" fill="#4ade80"/>
+            <ellipse cx="150" cy="150" rx="72" ry="88" fill="url(#shine)"/>
+            <defs>
+                <radialGradient id="shine" cx="40%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#bbf7d0" stop-opacity=".7"/>
+                    <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <!-- bangs -->
+            <path d="M80 120 Q110 70 150 80 Q120 95 112 120 Q140 85 190 90 Q170 100 168 118 Q200 95 222 125 Q215 70 150 62 Q85 66 80 120 Z" fill="#8b5cf6"/>
+
+            <!-- cork hat -->
+            <ellipse cx="150" cy="78" rx="98" ry="16" fill="#a16207"/>
+            <path d="M95 78 Q98 30 150 28 Q202 30 205 78 Z" fill="#ca8a04"/>
+            <rect x="96" y="66" width="108" height="9" fill="#78350f"/>
+            <g stroke="#92400e" stroke-width="1.5">
+                <line x1="65" y1="84" x2="62" y2="104"/><rect x="57" y="102" width="9" height="13" rx="2" fill="#d6a76c"/>
+                <line x1="95" y1="92" x2="94" y2="112"/><rect x="89" y="110" width="9" height="13" rx="2" fill="#d6a76c"/>
+                <line x1="205" y1="92" x2="206" y2="112"/><rect x="202" y="110" width="9" height="13" rx="2" fill="#d6a76c"/>
+                <line x1="235" y1="84" x2="238" y2="104"/><rect x="234" y="102" width="9" height="13" rx="2" fill="#d6a76c"/>
+            </g>
+
+            <!-- eyes -->
+            <g>
+                <ellipse cx="118" cy="150" rx="25" ry="33" transform="rotate(-25 118 150)" fill="#111827"/>
+                <ellipse cx="182" cy="150" rx="25" ry="33" transform="rotate(25 182 150)" fill="#111827"/>
+                <ellipse cx="110" cy="138" rx="7" ry="10" fill="#fff" opacity=".85"/>
+                <ellipse cx="174" cy="138" rx="7" ry="10" fill="#fff" opacity=".85"/>
+                <circle cx="124" cy="160" r="3" fill="#fff" opacity=".6"/>
+                <circle cx="188" cy="160" r="3" fill="#fff" opacity=".6"/>
+                <!-- lashes -->
+                <g stroke="#111827" stroke-width="3" stroke-linecap="round">
+                    <line x1="94" y1="132" x2="84" y2="124"/><line x1="99" y1="124" x2="92" y2="113"/><line x1="107" y1="118" x2="103" y2="106"/>
+                    <line x1="206" y1="132" x2="216" y2="124"/><line x1="201" y1="124" x2="208" y2="113"/><line x1="193" y1="118" x2="197" y2="106"/>
+                </g>
+            </g>
+
+            <!-- blush + lips -->
+            <ellipse cx="102" cy="195" rx="12" ry="6" fill="#f472b6" opacity=".55"/>
+            <ellipse cx="198" cy="195" rx="12" ry="6" fill="#f472b6" opacity=".55"/>
+            <path d="M134 208 Q142 200 150 206 Q158 200 166 208 Q150 222 134 208 Z" fill="#e11d48"/>
+
+            <!-- neck + body -->
+            <rect x="138" y="232" width="24" height="22" fill="#4ade80"/>
+            <path d="M88 360 Q92 262 150 252 Q208 262 212 360 Z" fill="#0ea5e9"/>
+            <path d="M150 252 L132 300 L150 290 L168 300 Z" fill="#fbbf24"/>
+            <!-- boomerang -->
+            <path d="M205 300 Q240 290 262 312 Q238 300 214 318 Z" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+            <!-- earrings -->
+            <circle cx="80" cy="175" r="5" fill="#fbbf24"/>
+            <circle cx="220" cy="175" r="5" fill="#fbbf24"/>
+        </svg>
+
+        <div class="bubble">G'day, mate! 👽 Take me to your barbie!</div>
+
+        <ul class="facts">
+            <li>🌏 <strong>Home planet:</strong> Down Under, Sector Oz</li>
+            <li>🦘 <strong>Favourite pet:</strong> a kangaroo named Bruce <span class="roo">🦘</span></li>
+            <li>🍳 <strong>Favourite fuel:</strong> Vegemite on toast (yes, really)</li>
+            <li>🛸 <strong>Spaceship:</strong> a ute with a UFO on the roof</li>
+            <li>⚔️ <strong>KvK status:</strong> ready to fight, no worries</li>
+        </ul>
+
+        <footer><a href="{{ url_for('index') }}">← back to Earth</a></footer>
+    </main>
+</body>
+</html>
